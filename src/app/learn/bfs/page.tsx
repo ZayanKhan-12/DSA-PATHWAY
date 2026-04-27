@@ -174,10 +174,110 @@ Space:  O(V)
 
 V = number of vertices (nodes)
 E = number of edges`}</Code>
+
                 <p>
-                  Each node enters the queue exactly once. Each edge is examined twice — once from each endpoint.
-                  The visited set holds at most V entries.
+                  To calculate BFS time complexity properly, break the algorithm into the actual operations it performs.
+                  Don&apos;t just memorize <span className="text-primary">O(V + E)</span> — derive it.
                 </p>
+
+                <div className="space-y-4">
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">1. Initialization work</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      We create:
+                      <span className="text-foreground"> visited</span>,
+                      <span className="text-foreground"> queue</span>,
+                      and sometimes
+                      <span className="text-foreground"> order</span>.
+                      That setup is constant or proportional to the first node only, so this part is
+                      <span className="text-primary"> O(1)</span>.
+                    </div>
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">2. Each node is dequeued once → O(V)</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      A node is added to the queue only once because once it is marked visited,
+                      it can never be enqueued again.
+                      Since there are <span className="text-foreground">V</span> nodes total,
+                      the dequeue step can happen at most <span className="text-foreground">V</span> times.
+                      That contributes <span className="text-primary">O(V)</span>.
+                    </div>
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">3. Neighbor scanning across all nodes → O(E)</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      The expensive part is the inner loop:
+                    </div>
+                    <pre className="mt-3 overflow-x-auto border border-border bg-background/60 p-3 text-[12px] text-foreground">
+{`for (const neighbor of adj.get(node) ?? []) {
+  ...
+}`}
+                    </pre>
+                    <div className="mt-3 text-[13px] text-muted-foreground leading-relaxed">
+                      Across the entire BFS, this loop runs once per adjacency entry.
+                      <br /><br />
+                      In an adjacency-list graph:
+                      <br />
+                      - for a <span className="text-foreground">directed graph</span>, total neighbor visits = <span className="text-primary">E</span>
+                      <br />
+                      - for an <span className="text-foreground">undirected graph</span>, each edge appears twice in adjacency lists, so total neighbor visits = <span className="text-primary">2E</span>
+                      <br /><br />
+                      Since constants are ignored in Big-O,
+                      <span className="text-primary"> O(2E) = O(E)</span>.
+                    </div>
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">4. Add the two costs together</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      Total BFS work =
+                    </div>
+                    <pre className="mt-3 overflow-x-auto border border-border bg-background/60 p-3 text-[12px] text-foreground">
+{`node processing   +   edge scanning
+     O(V)          +      O(E)
+= O(V + E)`}
+                    </pre>
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">5. Space complexity</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      The queue can hold up to <span className="text-foreground">V</span> nodes in the worst case.
+                      The visited set can also hold up to <span className="text-foreground">V</span> nodes.
+                      The traversal order list, if stored, can hold up to <span className="text-foreground">V</span> nodes too.
+                      <br /><br />
+                      So:
+                    </div>
+                    <pre className="mt-3 overflow-x-auto border border-border bg-background/60 p-3 text-[12px] text-foreground">
+{`O(V) + O(V) + O(V) = O(V)`}
+                    </pre>
+                  </div>
+                </div>
+
+                <div className="mt-6 border-l-2 border-primary pl-4 text-sm text-muted-foreground leading-relaxed">
+                  <span className="text-primary">Exam shortcut:</span><br />
+                  BFS touches every node once and every edge once overall, so the time complexity is
+                  <span className="text-foreground"> O(V + E)</span>.
+                </div>
+
+                <div className="mt-6 terminal-frame p-4">
+                  <div className="text-sm font-bold text-foreground">Important note about JavaScript / TypeScript</div>
+                  <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                    In theory, BFS is <span className="text-primary">O(V + E)</span>.
+                    But in JavaScript, using <code className="text-foreground">Array.shift()</code> can be
+                    <span className="text-terminal-amber"> O(n)</span> because removing from the front shifts all remaining elements.
+                    <br /><br />
+                    So:
+                    <br />
+                    - <span className="text-foreground">algorithmically</span>, BFS is still <span className="text-primary">O(V + E)</span>
+                    <br />
+                    - <span className="text-foreground">this implementation detail</span> may slow the real runtime
+                    <br /><br />
+                    In production, use a deque or a queue with a head pointer.
+                  </div>
+                </div>
               </Section>
 
               <Section id="real-world" idx="07" title="Real-World Uses">
