@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BFSStepper } from "@/components/BFSStepper";
 
-export default function VisualizeBFS() {
+const VisualizeBFS = () => {
   return (
     <main className="relative min-h-screen">
       <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur">
@@ -62,4 +62,6 @@ export default function VisualizeBFS() {
       </section>
     </main>
   );
-}
+};
+
+export default VisualizeBFS;

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CurriculumTable } from "@/components/CurriculumTable";
 import { GraphVisualizer } from "@/components/GraphVisualizer";
 import { HeroTerminal } from "@/components/HeroTerminal";
@@ -17,18 +18,18 @@ export default function Home() {
       {/* NAV */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur">
         <div className="container flex h-14 items-center justify-between px-4 md:px-8">
-          <a href="#top" className="flex items-center gap-2 text-sm font-bold tracking-widest">
+          <a href="/" className="flex items-center gap-2 text-sm font-bold tracking-widest">
             <span className="inline-block h-3 w-3 bg-primary shadow-[0_0_12px_hsl(var(--primary))]" />
             <span className="text-glow">DSA<span className="text-muted-foreground">.</span>ENGINE</span>
           </a>
           <nav className="hidden md:flex items-center gap-6 text-[11px] uppercase tracking-widest text-muted-foreground">
             <a href="#method" className="hover:text-primary transition-colors">// method</a>
-            <a href="#visualize" className="hover:text-primary transition-colors">// visualize</a>
-            <a href="#curriculum" className="hover:text-primary transition-colors">// curriculum</a>
+            <a href="/visualize/bfs" className="hover:text-primary transition-colors">// visualize</a>
+            <a href="/learn/bfs" className="hover:text-primary transition-colors">// curriculum</a>
             <a href="#stack" className="hover:text-primary transition-colors">// stack</a>
           </nav>
           <a
-            href="#curriculum"
+            href="/learn/bfs"
             className="border border-primary bg-primary/10 px-3 py-1.5 text-[11px] font-bold tracking-widest text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
           >
             ./start →
@@ -59,13 +60,13 @@ export default function Home() {
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="#curriculum"
+                  href="/learn/bfs"
                   className="group inline-flex items-center gap-2 border-2 border-primary bg-primary px-5 py-3 text-sm font-bold tracking-widest text-primary-foreground hover:shadow-[var(--shadow-glow)] transition-all"
                 >
                   <span>▶</span> RUN_CURRICULUM
                 </a>
                 <a
-                  href="#visualize"
+                  href="/visualize/bfs"
                   className="inline-flex items-center gap-2 border-2 border-border px-5 py-3 text-sm font-bold tracking-widest text-foreground hover:border-primary hover:text-primary transition-colors"
                 >
                   <span className="text-primary">$</span> see_visualizer
@@ -228,7 +229,7 @@ export default function Home() {
           </h2>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <a
-              href="#curriculum"
+              href="/learn/bfs"
               className="border-2 border-primary bg-primary px-6 py-3 text-sm font-bold tracking-widest text-primary-foreground hover:shadow-[var(--shadow-glow)] transition-all"
             >
               ▶ START_MODULE_01
@@ -236,10 +237,10 @@ export default function Home() {
             <a
               href="https://www.linkedin.com/in/zayan-k12/"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="border-2 border-border px-6 py-3 text-sm font-bold tracking-widest hover:border-primary hover:text-primary transition-colors"
             >
-              $ contact_author
+              $ linkedin
             </a>
           </div>
         </div>
@@ -255,7 +256,7 @@ export default function Home() {
           <div className="flex gap-5">
             <a href="mailto:khanzayan_123@hotmail.com" className="hover:text-primary transition-colors">email</a>
             <a href="https://www.linkedin.com/in/zayan-k12/" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">linkedin</a>
-            <a href="#top" className="hover:text-primary transition-colors">↑ top</a>
+            <a href="/" className="hover:text-primary transition-colors">↑ top</a>
           </div>
         </div>
         <div className="mt-6 ascii-divider">
