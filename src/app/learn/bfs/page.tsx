@@ -38,7 +38,8 @@ const TOC = [
   ["walkthrough", "04", "Step-by-Step Example"],
   ["code", "05", "Code Implementation"],
   ["complexity", "06", "Time Complexity"],
-  ["practice", "07", "Practice Problems"],
+  ["real-world", "07", "Real-World Uses"],
+  ["practice", "08", "Practice Problems"],
 ] as const;
 
 export default function LearnBFS() {
@@ -179,7 +180,57 @@ E = number of edges`}</Code>
                 </p>
               </Section>
 
-              <Section id="practice" idx="07" title="Practice Problems">
+              <Section id="real-world" idx="07" title="Real-World Uses">
+                <p>
+                  BFS is not just an interview algorithm. It shows up anywhere you need the
+                  <span className="text-foreground"> shortest path in an unweighted system</span>,
+                  or when you need to explore things level by level.
+                </p>
+
+                <div className="space-y-3">
+                  {[
+                    [
+                      "Navigation in simple maps",
+                      "If every road segment is treated equally, BFS finds the minimum number of moves from one location to another."
+                    ],
+                    [
+                      "Social networks",
+                      "Finding degrees of separation between people is a BFS problem: friend → friend-of-friend → friend-of-friend-of-friend."
+                    ],
+                    [
+                      "Web crawling",
+                      "A crawler can use BFS to explore pages level by level starting from a seed URL, which is useful for controlled discovery."
+                    ],
+                    [
+                      "Network broadcasting",
+                      "Routers and switches often model propagation in layers. BFS helps simulate how information spreads hop by hop."
+                    ],
+                    [
+                      "Grid/maze games",
+                      "In games, BFS is used to find the shortest path for movement on boards, mazes, and tile maps when each move costs the same."
+                    ],
+                    [
+                      "Emergency response search",
+                      "If responders must search buildings floor by floor or room by room in concentric layers, BFS matches that operational strategy."
+                    ],
+                  ].map(([title, desc]) => (
+                    <div key={title} className="terminal-frame p-4">
+                      <div className="text-sm font-bold text-foreground">{title}</div>
+                      <div className="mt-1 text-[13px] text-muted-foreground leading-relaxed">{desc}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <Code>{`Real-life BFS pattern:
+start from source
+explore all distance-1 states
+then all distance-2 states
+then all distance-3 states
+...
+first time you reach target = shortest path`}</Code>
+              </Section>
+
+              <Section id="practice" idx="08" title="Practice Problems">
                 <ul className="space-y-2 pl-0">
                   {[
                     ["Number of Islands", "EASY", "Grid BFS — flood fill from each unvisited '1'."],
