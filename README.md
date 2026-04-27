@@ -38,7 +38,7 @@ Root Problem
 → Time Complexity Analysis
 ---
 
-##🏗️ Architecture
+🏗️ Architecture
 
 Client (Browser)
         ↓
@@ -57,7 +57,7 @@ Code Execution Service (Rust / Go)
 Worker Services (Code Runner / Visual Engine)
 ---
 
-##Responsibility
+Responsibility
 Frontend:
 - UI/UX
 - Visualizers
@@ -85,13 +85,17 @@ Code Runner (Planned):
 - Handle test cases
 ---
 
-##⚡ Getting Started
+⚡ Getting Started
 npm install
 npm run dev
 - Open
 http://localhost:3000
 ---
 
-##📌 Author
-Zayan Khan
-Computer Science Student | Software Engineer
+
+#### 📌 Author
+
+**Zayan Khan**  
+Computer Science Student | Software Engineer  
+📫 Email: khanzayan_123@hotmail.com  
+🔗 LinkedIn: https://www.linkedin.com/in/zayan-k12/
