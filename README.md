@@ -91,11 +91,14 @@ npm run dev
 - Open
 http://localhost:3000
 ---
+```
+
 
 
 #### 📌 Author
 
 **Zayan Khan**  
 Computer Science Student | Software Engineer  
-📫 Email: khanzayan_123@hotmail.com  
-🔗 LinkedIn: https://www.linkedin.com/in/zayan-k12/
+
+📫 Email: [khanzayan_123@hotmail.com](mailto:khanzayan_123@hotmail.com)  
+🔗 LinkedIn: [zayan-k12](https://www.linkedin.com/in/zayan-k12/)
