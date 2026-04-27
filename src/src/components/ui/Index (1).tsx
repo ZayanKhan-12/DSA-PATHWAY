@@ -11,7 +11,7 @@ const Stat = ({ k, v, sub }: { k: string; v: string; sub: string }) => (
   </div>
 );
 
-export default function Home() {
+const Index = () => {
   return (
     <main className="relative min-h-screen">
       {/* NAV */}
@@ -264,4 +264,6 @@ export default function Home() {
       </footer>
     </main>
   );
-}
+};
+
+export default Index;
