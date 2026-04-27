@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BFSCodeTabs from "@/components/BFSCodeTabs";
 
 const Section = ({
   id,
@@ -155,35 +156,14 @@ visit order: A B C D E F G H I`}</Code>
 
               <Section id="code" idx="05" title="Code Implementation">
                 <p>
-                  The canonical TypeScript implementation. Note:
+                  Same BFS logic, shown across multiple languages.
+                  The key invariant stays the same:
                   <span className="text-primary"> mark visited when you enqueue, not when you dequeue.</span>
-                  Otherwise you&apos;ll add the same node twice.
                 </p>
-                <Code>{`function bfs(
-  start: number,
-  adj: Map<number, number[]>
-): number[] {
-  const order: number[] = [];
-  const visited = new Set<number>([start]);
-  const queue: number[] = [start];
-
-  while (queue.length > 0) {
-    const node = queue.shift()!;
-    order.push(node);
-
-    for (const neighbor of adj.get(node) ?? []) {
-      if (!visited.has(neighbor)) {
-        visited.add(neighbor);
-        queue.push(neighbor);
-      }
-    }
-  }
-
-  return order;
-}`}</Code>
+                <BFSCodeTabs />
                 <p>
-                  <span className="text-terminal-amber">⚠ perf note:</span> <code className="text-foreground">Array.shift()</code> is O(n).
-                  In production, use a real deque to keep BFS at O(V+E).
+                  <span className="text-terminal-amber">⚠ perf note:</span> some languages make front-removal from a plain array expensive.
+                  In production, prefer a real queue or deque structure to keep BFS at O(V+E).
                 </p>
               </Section>
 
