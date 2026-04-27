@@ -210,11 +210,48 @@ E = number of edges`}</Code>
                     <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
                       The expensive part is the inner loop:
                     </div>
-                    <pre className="mt-3 overflow-x-auto border border-border bg-background/60 p-3 text-[12px] text-foreground">
-{`for (const neighbor of adj.get(node) ?? []) {
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">TypeScript</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for (const neighbor of adj.get(node) ?? []) {
   ...
-}`}
-                    </pre>
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">Python</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for neighbor in adj.get(node, []):
+    ...`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">Java</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for (int neighbor : adj.getOrDefault(node, Collections.emptyList())) {
+    ...
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">C++</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for (int neighbor : adj[node]) {
+    ...
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">C#</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`foreach (int neighbor in adj.GetValueOrDefault(node, new List<int>())) {
+    ...
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">Go</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for _, neighbor := range adj[node] {
+    ...
+}`}</pre>
+                      </div>
+                    </div>
                     <div className="mt-3 text-[13px] text-muted-foreground leading-relaxed">
                       Across the entire BFS, this loop runs once per adjacency entry.
                       <br /><br />
