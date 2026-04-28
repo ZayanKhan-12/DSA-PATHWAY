@@ -24,8 +24,8 @@ export default function Home() {
           </a>
           <nav className="hidden md:flex items-center gap-6 text-[11px] uppercase tracking-widest text-muted-foreground">
             <a href="#method" className="hover:text-primary transition-colors">// method</a>
-            <a href="/visualize/bfs" className="hover:text-primary transition-colors">// visualize</a>
-            <a href="/learn/bfs" className="hover:text-primary transition-colors">// curriculum</a>
+            <a href="/visualize/arrays-hashing" className="hover:text-primary transition-colors">// visualize</a>
+            <a href="/learn/arrays-hashing" className="hover:text-primary transition-colors">// curriculum</a>
             <a href="#stack" className="hover:text-primary transition-colors">// stack</a>
           </nav>
           <a
