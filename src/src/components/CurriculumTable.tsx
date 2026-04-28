@@ -18,7 +18,7 @@ const TOPICS: Topic[] = [
     href: "/learn/strings-sliding-window", desc: "Substring search, anagrams, palindromes" },
   { id: "03", code: "STK", title: "Stack & Queue", difficulty: "EASY", problems: 14, status: "READY",
     href: "/learn/stack-queue", desc: "Monotonic stacks, parsing, BFS scaffolding" },
-  { id: "04", code: "LL", title: "Linked Lists", difficulty: "MED", problems: 16, status: "READY", desc: "Reversal, cycle detection, fast/slow pointers" },
+  { id: "04", code: "LL", title: "Linked Lists", difficulty: "MED", problems: 16, status: "READY", desc: "Reversal, cycle detection, fast/slow pointers", href: "/learn/linked-lists" },
   { id: "05", code: "TRE", title: "Trees & Recursion", difficulty: "MED", problems: 22, status: "READY", desc: "DFS, BFS, traversal patterns, tree DP", href: "/learn/dfs" },
   { id: "06", code: "GRH", title: "Graph Traversal", difficulty: "MED", problems: 28, status: "READY", desc: "BFS, DFS, topological sort, union-find", href: "/learn/bfs" },
   { id: "07", code: "DP1", title: "Dynamic Programming I", difficulty: "MED", problems: 20, status: "BETA", desc: "1D DP, memoization, classic recurrences" },
