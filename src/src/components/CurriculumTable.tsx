@@ -21,7 +21,7 @@ const TOPICS: Topic[] = [
   { id: "04", code: "LL", title: "Linked Lists", difficulty: "MED", problems: 16, status: "READY", desc: "Reversal, cycle detection, fast/slow pointers", href: "/learn/linked-lists" },
   { id: "05", code: "TRE", title: "Trees & Recursion", difficulty: "MED", problems: 22, status: "READY", desc: "DFS, BFS, traversal patterns, tree DP", href: "/learn/dfs" },
   { id: "06", code: "GRH", title: "Graph Traversal", difficulty: "MED", problems: 28, status: "READY", desc: "BFS, DFS, topological sort, union-find", href: "/learn/bfs" },
-  { id: "07", code: "DP1", title: "Dynamic Programming I", difficulty: "MED", problems: 20, status: "BETA", desc: "1D DP, memoization, classic recurrences" },
+  { id: "07", code: "DP1", title: "Dynamic Programming I", difficulty: "MED", problems: 20, status: "BETA", desc: "1D DP, memoization, classic recurrences", href: "/learn/dynamic-programming-1" },
   { id: "08", code: "DP2", title: "Dynamic Programming II", difficulty: "HARD", problems: 18, status: "BETA", desc: "2D DP, knapsack, interval DP, bitmask" },
   { id: "09", code: "GRD", title: "Greedy & Intervals", difficulty: "MED", problems: 15, status: "READY", desc: "Sorting, scheduling, exchange arguments" },
   { id: "10", code: "BIT", title: "Bit Manipulation", difficulty: "MED", problems: 12, status: "BETA", desc: "Masks, XOR tricks, subsets via bits" },
