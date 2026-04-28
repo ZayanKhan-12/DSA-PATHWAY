@@ -30,7 +30,6 @@ type MonoFrame = {
   kind: "mono";
   index: number;
   value: number | null;
-  nums: number[];
   stack: number[];
   answer: number[];
   action: string;
@@ -60,7 +59,6 @@ type GraphNode = {
 };
 
 const vpInput = "([]){}";
-const MONO_SOURCE = [73, 74, 75, 71, 69, 72, 76, 73];
 const bfsNodes: GraphNode[] = [
   { id: 0, x: 16, y: 22, label: "0" },
   { id: 1, x: 38, y: 22, label: "1" },
@@ -256,7 +254,7 @@ function buildBfsFrames(): BfsFrame[] {
 }
 
 function buildMonotonicStackFrames(): MonoFrame[] {
-  const nums = [...MONO_SOURCE];
+  const nums = [73, 74, 75, 71, 69, 72, 76, 73];
   const frames: MonoFrame[] = [];
   const stack: number[] = [];
   const answer = new Array(nums.length).fill(0);
@@ -265,7 +263,6 @@ function buildMonotonicStackFrames(): MonoFrame[] {
     kind: "mono",
     index: -1,
     value: null,
-    nums: [...nums],
     stack: [...stack],
     answer: [...answer],
     action: "Initialize",
@@ -278,7 +275,6 @@ function buildMonotonicStackFrames(): MonoFrame[] {
       kind: "mono",
       index: i,
       value: nums[i],
-      nums: [...nums],
       stack: [...stack],
       answer: [...answer],
       action: `Read ${nums[i]}`,
@@ -293,7 +289,6 @@ function buildMonotonicStackFrames(): MonoFrame[] {
         kind: "mono",
         index: i,
         value: nums[i],
-        nums: [...nums],
         stack: [...stack],
         answer: [...answer],
         action: `Resolve day ${prev}`,
@@ -302,12 +297,10 @@ function buildMonotonicStackFrames(): MonoFrame[] {
     }
 
     stack.push(i);
-
     frames.push({
       kind: "mono",
       index: i,
       value: nums[i],
-      nums: [...nums],
       stack: [...stack],
       answer: [...answer],
       action: `Push index ${i}`,
@@ -319,7 +312,6 @@ function buildMonotonicStackFrames(): MonoFrame[] {
     kind: "mono",
     index: -1,
     value: null,
-    nums: [...nums],
     stack: [...stack],
     answer: [...answer],
     action: "Finish",
@@ -504,219 +496,41 @@ function QueueRail({
 }: {
   items: number[];
 }) {
-  const front = items.length > 0 ? items[0] : null;
-  const rear = items.length > 0 ? items[items.length - 1] : null;
-
   return (
     <div className="terminal-frame p-4">
       <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
-        Queue State
+        queue state
       </div>
 
-      <div className="border border-border bg-background/60 min-h-[220px] p-4">
-        <div className="mb-4 text-sm text-muted-foreground">
-          FIFO queue visualization. <span className="text-primary">Front</span> is dequeued first.
-          <span className="text-cyan-300"> Rear</span> is where new nodes are enqueued.
-        </div>
-
+      <div className="border border-border bg-background/60 min-h-[180px] p-4 flex items-center overflow-x-auto">
         {items.length === 0 ? (
-          <div className="h-[130px] flex items-center justify-center border border-dashed border-border text-sm text-muted-foreground">
-            Queue is empty
-          </div>
+          <div className="text-sm text-muted-foreground">(empty)</div>
         ) : (
-          <div className="h-[130px] flex items-center overflow-x-auto">
-            <div className="flex items-center gap-3 min-w-max pr-2">
-              {items.map((item, idx) => {
-                const isFront = idx === 0;
-                const isRear = idx === items.length - 1;
+          <div className="flex items-center gap-3 min-w-max">
+            {items.map((item, idx) => {
+              const isFront = idx === 0;
+              const isRear = idx === items.length - 1;
 
-                return (
-                  <div key={`${item}-${idx}`} className="flex items-center gap-3">
-                    <div
-                      className={`min-w-[110px] border px-4 py-4 text-center ${
-                        isFront
-                          ? "border-primary bg-primary/10 text-primary"
-                          : isRear
-                          ? "border-cyan-400 bg-cyan-400/10 text-cyan-300"
-                          : "border-border bg-background/40 text-foreground"
-                      }`}
-                    >
-                      <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-1">
-                        position {idx}
-                      </div>
-                      <div className="text-3xl font-bold">{item}</div>
-                      <div className="mt-2 text-[10px] uppercase tracking-[0.22em]">
-                        {isFront ? "front" : isRear ? "rear" : "queued"}
-                      </div>
+              return (
+                <div key={`${item}-${idx}`} className="flex items-center gap-3">
+                  <div
+                    className={`min-w-[86px] px-4 py-4 border text-center ${
+                      isFront
+                        ? "border-primary bg-primary/10 text-primary"
+                        : isRear
+                        ? "border-cyan-400 bg-cyan-400/10 text-cyan-300"
+                        : "border-border text-foreground"
+                    }`}
+                  >
+                    <div className="text-xl font-bold">{item}</div>
+                    <div className="mt-2 text-[10px] uppercase tracking-[0.22em]">
+                      {isFront ? "front" : isRear ? "rear" : "queued"}
                     </div>
-
-                    {idx < items.length - 1 ? (
-                      <div className="text-xl text-muted-foreground select-none">→</div>
-                    ) : null}
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          <div className="border border-border bg-background/40 p-3">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-2">
-              Front
-            </div>
-            <div className="text-2xl font-bold text-primary">
-              {front ?? "—"}
-            </div>
-          </div>
-
-          <div className="border border-border bg-background/40 p-3">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-2">
-              Rear
-            </div>
-            <div className="text-2xl font-bold text-cyan-300">
-              {rear ?? "—"}
-            </div>
-          </div>
-
-          <div className="border border-border bg-background/40 p-3">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-2">
-              Size
-            </div>
-            <div className="text-2xl font-bold text-foreground">
-              {items.length}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
-function ParenthesesStackViz({
-  stack,
-}: {
-  stack: string[];
-}) {
-  return (
-    <div className="terminal-frame p-4">
-      <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
-        stack state
-      </div>
-
-      <div className="border border-border bg-background/60 min-h-[240px] p-5 flex items-end justify-center">
-        {stack.length === 0 ? (
-          <div className="text-sm text-muted-foreground">(empty)</div>
-        ) : (
-          <div className="flex flex-col-reverse items-center gap-2">
-            {stack.map((ch, idx) => {
-              const isTop = idx === stack.length - 1;
-              return (
-                <div
-                  key={`${ch}-${idx}`}
-                  className={`w-[120px] border px-4 py-4 text-center ${
-                    isTop
-                      ? "border-primary bg-primary/10 text-primary shadow-[0_0_12px_rgba(57,255,20,0.12)]"
-                      : "border-border text-foreground"
-                  }`}
-                >
-                  <div className="text-3xl font-bold">{ch}</div>
-                  <div className="mt-2 text-[10px] uppercase tracking-[0.22em]">
-                    {isTop ? "top" : "stack"}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function MonoArrayRail({
-  nums,
-  currentIndex,
-}: {
-  nums?: number[];
-  currentIndex: number;
-}) {
-  const safeNums = nums && nums.length > 0 ? nums : MONO_SOURCE;
-
-  return (
-    <div className="terminal-frame p-4">
-      <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
-        source temperatures
-      </div>
-
-      <div className="border border-border bg-background/60 p-4 overflow-x-auto">
-        <div className="flex gap-2 min-w-max">
-          {safeNums.map((n, idx) => (
-            <div
-              key={`${n}-${idx}`}
-              className={`min-w-[86px] border px-3 py-3 text-center ${
-                idx === currentIndex
-                  ? "border-yellow-400 bg-yellow-400/10 text-yellow-300"
-                  : "border-border text-foreground"
-              }`}
-            >
-              <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                day {idx}
-              </div>
-              <div className="mt-2 text-2xl font-bold">{n}</div>
-              <div className="mt-1 text-[10px] uppercase tracking-[0.2em]">
-                {idx === currentIndex ? "current" : "temp"}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MonoStackRail({
-  nums,
-  stack,
-}: {
-  nums?: number[];
-  stack: number[];
-}) {
-  const safeNums = nums && nums.length > 0 ? nums : MONO_SOURCE;
-
-  return (
-    <div className="terminal-frame p-4">
-      <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
-        monotonic stack
-      </div>
-
-      <div className="border border-border bg-background/60 min-h-[280px] p-5 flex items-end justify-center">
-        {stack.length === 0 ? (
-          <div className="text-sm text-muted-foreground">(empty)</div>
-        ) : (
-          <div className="flex flex-col-reverse items-center gap-2">
-            {stack.map((idx, pos) => {
-              const isTop = pos === stack.length - 1;
-              const temp = safeNums[idx];
-
-              return (
-                <div
-                  key={`${idx}-${pos}`}
-                  className={`w-[160px] border px-4 py-3 text-center ${
-                    isTop
-                      ? "border-primary bg-primary/10 text-primary shadow-[0_0_12px_rgba(57,255,20,0.12)]"
-                      : "border-border text-foreground"
-                  }`}
-                >
-                  <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                    idx {idx}
-                  </div>
-                  <div className="mt-2 text-3xl font-bold">{temp}</div>
-                  <div className="mt-1 text-[10px] uppercase tracking-[0.22em]">
-                    {isTop ? "top" : "stack"}
-                  </div>
+                  {idx < items.length - 1 ? (
+                    <div className="text-muted-foreground text-lg select-none">→</div>
+                  ) : null}
                 </div>
               );
             })}
@@ -1082,7 +896,11 @@ export default function StackQueueVisualizerPage() {
             <div className="space-y-5">
               {frame.kind === "stack" ? (
                 <>
-                  <ParenthesesStackViz stack={frame.stack} />
+                  <StructureBox
+                    title="stack state"
+                    items={frame.stack}
+                    highlightTop
+                  />
 
                   <div className="terminal-frame p-4">
                     <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
@@ -1140,50 +958,11 @@ export default function StackQueueVisualizerPage() {
                 </>
               ) : frame.kind === "mono" ? (
                 <>
-                  <MonoArrayRail
-                    nums={frame.nums}
-                    currentIndex={frame.index >= 0 ? frame.index : 0}
+                  <StructureBox
+                    title="monotonic stack (indices)"
+                    items={frame.stack}
+                    highlightTop
                   />
-
-                  <MonoStackRail
-                    nums={frame.nums}
-                    stack={frame.stack}
-                  />
-
-                  <div className="terminal-frame p-4">
-                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
-                      current monotonic state
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      <div className="border border-border bg-background/60 p-3">
-                        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                          current index
-                        </div>
-                        <div className="mt-2 text-2xl font-bold text-yellow-300">
-                          {frame.index >= 0 ? frame.index : "—"}
-                        </div>
-                      </div>
-
-                      <div className="border border-border bg-background/60 p-3">
-                        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                          current temp
-                        </div>
-                        <div className="mt-2 text-2xl font-bold text-yellow-300">
-                          {frame.value ?? "—"}
-                        </div>
-                      </div>
-
-                      <div className="border border-border bg-background/60 p-3">
-                        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                          stack size
-                        </div>
-                        <div className="mt-2 text-2xl font-bold text-foreground">
-                          {frame.stack.length}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
                   <div className="terminal-frame p-4">
                     <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
@@ -1222,7 +1001,7 @@ export default function StackQueueVisualizerPage() {
                 </>
               ) : (
                 <>
-                  <div className="terminal-frame p-5">
+                  <div className="terminal-frame p-6">
                     <CircularQueueRing
                       title="CIRCULAR QUEUE"
                       capacity={8}
@@ -1231,49 +1010,6 @@ export default function StackQueueVisualizerPage() {
                       activeIndex={frame.activeIndex ?? null}
                       values={frame.queue}
                     />
-                  </div>
-
-                  <div className="terminal-frame p-4">
-                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
-                      logical queue order
-                    </div>
-
-                    {frame.logicalOrder.length === 0 ? (
-                      <div className="border border-border bg-background/60 p-4 text-sm text-muted-foreground">
-                        Queue is empty.
-                      </div>
-                    ) : (
-                      <div className="border border-border bg-background/60 p-4 overflow-x-auto">
-                        <div className="flex items-center gap-2 min-w-max">
-                          {frame.logicalOrder.map((v, idx) => (
-                            <div key={`${String(v)}-${idx}`} className="flex items-center gap-2">
-                              <div
-                                className={`min-w-[84px] border px-3 py-3 text-center ${
-                                  idx === 0
-                                    ? "border-primary bg-primary/10 text-primary"
-                                    : idx === frame.logicalOrder.length - 1
-                                    ? "border-cyan-400 bg-cyan-400/10 text-cyan-300"
-                                    : "border-border text-foreground"
-                                }`}
-                              >
-                                <div className="text-lg font-bold">{v ?? "·"}</div>
-                                <div className="mt-1 text-[10px] uppercase tracking-[0.22em]">
-                                  {idx === 0
-                                    ? "front"
-                                    : idx === frame.logicalOrder.length - 1
-                                    ? "rear-side"
-                                    : "queued"}
-                                </div>
-                              </div>
-
-                              {idx < frame.logicalOrder.length - 1 ? (
-                                <div className="text-muted-foreground">→</div>
-                              ) : null}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
 
                   <div className="terminal-frame p-4">
