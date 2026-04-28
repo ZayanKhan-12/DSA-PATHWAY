@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DFSCodeTabs from "@/components/DFSCodeTabs";
 
 const Section = ({
   id,
@@ -150,24 +151,14 @@ queue      → BFS, not DFS`}</Code>
 
               <Section id="code" idx="05" title="Code Implementation">
                 <p>
-                  Recursive DFS is the cleanest mental model.
-                  Mark nodes visited immediately when you enter them.
+                  Same DFS logic, shown across multiple languages.
+                  The important invariant stays the same:
+                  <span className="text-primary"> mark visited immediately when you enter the node.</span>
                 </p>
-                <Code>{`function dfs(
-  node: number,
-  adj: Map<number, number[]>,
-  visited: Set<number>,
-  order: number[]
-): void {
-  visited.add(node);
-  order.push(node);
-
-  for (const neighbor of adj.get(node) ?? []) {
-    if (!visited.has(neighbor)) {
-      dfs(neighbor, adj, visited, order);
-    }
-  }
-}`}</Code>
+                <DFSCodeTabs />
+                <p>
+                  Recursive DFS is the cleanest mental model, but the same traversal can also be implemented iteratively using an explicit stack.
+                </p>
               </Section>
 
               <Section id="complexity" idx="06" title="Time Complexity">
@@ -176,10 +167,112 @@ Space:  O(V)
 
 V = number of vertices (nodes)
 E = number of edges`}</Code>
+
                 <p>
-                  DFS visits each node once and scans each edge once overall.
-                  The recursion stack can grow to O(V) in the worst case.
+                  To derive DFS time complexity properly, split the work into the operations DFS actually performs.
+                  Don&apos;t just memorize <span className="text-primary">O(V + E)</span> — compute where it comes from.
                 </p>
+
+                <div className="space-y-4">
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">1. Entering each node once → O(V)</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      A node is only entered one time because the <span className="text-foreground">visited</span> set prevents revisits.
+                      Since there are <span className="text-foreground">V</span> nodes total, the recursive call body can execute at most
+                      <span className="text-primary"> V</span> times.
+                    </div>
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">2. Neighbor scanning across all nodes → O(E)</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      The expensive part is the inner loop, where DFS scans adjacency lists.
+                    </div>
+
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">TypeScript</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for (const neighbor of adj.get(node) ?? []) {
+  ...
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">Python</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for neighbor in adj.get(node, []):
+    ...`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">Java</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for (int neighbor : adj.getOrDefault(node, Collections.emptyList())) {
+    ...
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">C++</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for (int neighbor : adj[node]) {
+    ...
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">C#</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`foreach (int neighbor in adj.GetValueOrDefault(node, new List<int>())) {
+    ...
+}`}</pre>
+                      </div>
+
+                      <div className="border border-border bg-background/60 p-3">
+                        <div className="mb-2 text-[11px] font-bold tracking-widest text-primary">Go</div>
+                        <pre className="overflow-x-auto text-[12px] text-foreground">{`for _, neighbor := range adj[node] {
+    ...
+}`}</pre>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 text-[13px] text-muted-foreground leading-relaxed">
+                      Across the entire DFS, this loop runs once per adjacency entry.
+                      <br /><br />
+                      In an adjacency-list graph:
+                      <br />
+                      - for a <span className="text-foreground">directed graph</span>, total neighbor scans = <span className="text-primary">E</span>
+                      <br />
+                      - for an <span className="text-foreground">undirected graph</span>, each edge appears twice in adjacency lists, so total scans = <span className="text-primary">2E</span>
+                      <br /><br />
+                      Since constants are ignored in Big-O,
+                      <span className="text-primary"> O(2E) = O(E)</span>.
+                    </div>
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">3. Add the two costs together</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      Total DFS work =
+                    </div>
+                    <pre className="mt-3 overflow-x-auto border border-border bg-background/60 p-3 text-[12px] text-foreground">{`node visits       +   edge scans
+   O(V)           +     O(E)
+= O(V + E)`}</pre>
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    <div className="text-sm font-bold text-foreground">4. Space complexity → O(V)</div>
+                    <div className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+                      The visited set can store up to <span className="text-foreground">V</span> nodes.
+                      The recursion stack can also grow up to <span className="text-foreground">V</span> deep in the worst case
+                      (for example, a path graph).
+                      If you store traversal order, that is another O(V).
+                    </div>
+                    <pre className="mt-3 overflow-x-auto border border-border bg-background/60 p-3 text-[12px] text-foreground">{`O(V) + O(V) + O(V) = O(V)`}</pre>
+                  </div>
+                </div>
+
+                <div className="mt-6 border-l-2 border-primary pl-4 text-sm text-muted-foreground leading-relaxed">
+                  <span className="text-primary">Exam shortcut:</span><br />
+                  DFS visits every node once and scans every edge once overall, so the total time complexity is
+                  <span className="text-foreground"> O(V + E)</span>.
+                </div>
               </Section>
 
               <Section id="real-world" idx="07" title="Real-World Uses">
@@ -227,15 +320,37 @@ E = number of edges`}</Code>
               </Section>
 
               <div className="py-12">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">// next_module</div>
+                <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                  // next_module
+                </div>
+
                 <h3 className="mt-2 text-2xl md:text-3xl font-bold">
                   Next up: <span className="text-primary text-glow">Connected Components</span>
                 </h3>
+
+                <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+                  Continue to the next module to learn how DFS and BFS can discover whole connected regions in a graph.
+                </p>
+
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <Link href="/visualize/dfs" className="border-2 border-primary bg-primary px-5 py-3 text-sm font-bold tracking-widest text-primary-foreground hover:shadow-[var(--shadow-glow)]">
-                    ▶ PRACTICE_IN_VIZ
+                  <Link
+                    href="/learn/connected-components"
+                    className="border-2 border-primary bg-primary px-5 py-3 text-sm font-bold tracking-widest text-primary-foreground hover:shadow-[var(--shadow-glow)]"
+                  >
+                    ▶ OPEN_CONNECTED_COMPONENTS
                   </Link>
-                  <Link href="/" className="border-2 border-border px-5 py-3 text-sm font-bold tracking-widest hover:border-primary hover:text-primary">
+
+                  <Link
+                    href="/visualize/connected-components"
+                    className="border-2 border-border px-5 py-3 text-sm font-bold tracking-widest hover:border-primary hover:text-primary"
+                  >
+                    $ OPEN_CC_VISUALIZER
+                  </Link>
+
+                  <Link
+                    href="/"
+                    className="border-2 border-border px-5 py-3 text-sm font-bold tracking-widest hover:border-primary hover:text-primary"
+                  >
                     $ back_to_curriculum
                   </Link>
                 </div>
