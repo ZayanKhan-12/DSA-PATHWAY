@@ -14,7 +14,8 @@ type Topic = {
 const TOPICS: Topic[] = [
   { id: "01", code: "ARR", title: "Arrays & Hashing", difficulty: "EASY", problems: 24, status: "READY",
     href: "/learn/arrays-hashing", desc: "Two pointers, prefix sums, frequency maps" },
-  { id: "02", code: "STR", title: "Strings & Sliding Window", difficulty: "EASY", problems: 18, status: "READY", desc: "Substring search, anagrams, palindromes" },
+  { id: "02", code: "STR", title: "Strings & Sliding Window", difficulty: "EASY", problems: 18, status: "READY",
+    href: "/learn/strings-sliding-window", desc: "Substring search, anagrams, palindromes" },
   { id: "03", code: "STK", title: "Stack & Queue", difficulty: "EASY", problems: 14, status: "READY", desc: "Monotonic stacks, parsing, BFS scaffolding" },
   { id: "04", code: "LL", title: "Linked Lists", difficulty: "MED", problems: 16, status: "READY", desc: "Reversal, cycle detection, fast/slow pointers" },
   { id: "05", code: "TRE", title: "Trees & Recursion", difficulty: "MED", problems: 22, status: "READY", desc: "DFS, BFS, traversal patterns, tree DP", href: "/learn/dfs" },
