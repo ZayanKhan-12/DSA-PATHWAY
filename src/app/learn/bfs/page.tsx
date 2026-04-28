@@ -394,15 +394,38 @@ first time you reach target = shortest path`}</Code>
               </Section>
 
               <div className="py-12">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">// next_module</div>
+                <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                  // next_module
+                </div>
+
                 <h3 className="mt-2 text-2xl md:text-3xl font-bold">
                   Next up: <span className="text-primary text-glow">DFS &amp; Recursion</span>
                 </h3>
+
+                <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+                  Continue to the next module to learn how DFS explores deeply, uses recursion,
+                  and solves traversal and backtracking problems.
+                </p>
+
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <Link href="/visualize/bfs" className="border-2 border-primary bg-primary px-5 py-3 text-sm font-bold tracking-widest text-primary-foreground hover:shadow-[var(--shadow-glow)]">
-                    ▶ PRACTICE_IN_VIZ
+                  <Link
+                    href="/learn/dfs"
+                    className="border-2 border-primary bg-primary px-5 py-3 text-sm font-bold tracking-widest text-primary-foreground hover:shadow-[var(--shadow-glow)]"
+                  >
+                    ▶ OPEN_DFS_MODULE
                   </Link>
-                  <Link href="/" className="border-2 border-border px-5 py-3 text-sm font-bold tracking-widest hover:border-primary hover:text-primary">
+
+                  <Link
+                    href="/visualize/dfs"
+                    className="border-2 border-border px-5 py-3 text-sm font-bold tracking-widest hover:border-primary hover:text-primary"
+                  >
+                    $ OPEN_DFS_VISUALIZER
+                  </Link>
+
+                  <Link
+                    href="/"
+                    className="border-2 border-border px-5 py-3 text-sm font-bold tracking-widest hover:border-primary hover:text-primary"
+                  >
                     $ back_to_curriculum
                   </Link>
                 </div>
