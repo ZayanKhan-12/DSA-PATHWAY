@@ -47,22 +47,22 @@ function buildFrames(): Frame[] {
   frames.push({
     action: "Sort intervals by end time",
     explanation:
-      "Greedy interval scheduling begins by sorting intervals by finishing time. Earlier finishing intervals leave the most room for future intervals.",
+      "The greedy strategy starts by sorting intervals by finishing time. Earlier finishing intervals preserve the greatest amount of room for future compatible choices.",
     currentId: null,
     chosenIds: [],
     rejectedIds: [],
     lastEnd: "−∞",
     decision: "sort",
-    compareText: "No comparison yet. First establish the correct greedy order.",
+    compareText: "Initialize ordering before any selection decisions are made.",
     intervals: sorted,
   });
 
   for (const interval of sorted) {
     frames.push({
       action: `Inspect ${interval.id} = [${interval.start}, ${interval.end}]`,
-      explanation: `Greedy compares start ${interval.start} with the end of the last accepted interval ${
+      explanation: `Compare the current start ${interval.start} with the end of the last accepted interval ${
         lastEnd === -Infinity ? "−∞" : lastEnd
-      }. If start ≥ lastEnd, this interval is safe to take.`,
+      }. Accept only if start ≥ lastEnd.`,
       currentId: interval.id,
       chosenIds: [...chosen],
       rejectedIds: [...rejected],
@@ -79,8 +79,8 @@ function buildFrames(): Frame[] {
       lastEnd = interval.end;
 
       frames.push({
-        action: `Choose ${interval.id}`,
-        explanation: `${interval.id} is compatible with the current schedule, so greedy accepts it. Update lastEnd to ${interval.end}.`,
+        action: `Accept ${interval.id}`,
+        explanation: `${interval.id} is compatible with the current schedule, so the greedy rule accepts it and updates lastEnd to ${interval.end}.`,
         currentId: interval.id,
         chosenIds: [...chosen],
         rejectedIds: [...rejected],
@@ -88,7 +88,7 @@ function buildFrames(): Frame[] {
         decision: "choose",
         compareText: `${interval.start} ≥ ${
           chosen.length === 1 ? "−∞" : "previous end"
-        } → choose`,
+        }  →  accept`,
         intervals: sorted,
       });
     } else {
@@ -96,21 +96,21 @@ function buildFrames(): Frame[] {
 
       frames.push({
         action: `Reject ${interval.id}`,
-        explanation: `${interval.id} overlaps with a chosen interval, so greedy skips it. Keeping it would break compatibility.`,
+        explanation: `${interval.id} overlaps with an already accepted interval, so the greedy schedule skips it to maintain compatibility.`,
         currentId: interval.id,
         chosenIds: [...chosen],
         rejectedIds: [...rejected],
         lastEnd: lastEnd === -Infinity ? "−∞" : String(lastEnd),
         decision: "reject",
-        compareText: `${interval.start} < ${lastEnd} → reject`,
+        compareText: `${interval.start} < ${lastEnd}  →  reject`,
         intervals: sorted,
       });
     }
   }
 
   frames.push({
-    action: "Finish",
-    explanation: `The scan is complete. Greedy selected the compatible schedule {${chosen.join(
+    action: "Finish schedule",
+    explanation: `All intervals have been processed. The final greedy schedule is {${chosen.join(
       ", "
     )}}.`,
     currentId: null,
@@ -118,7 +118,7 @@ function buildFrames(): Frame[] {
     rejectedIds: [...rejected],
     lastEnd: String(lastEnd),
     decision: "done",
-    compareText: "All intervals processed.",
+    compareText: "Processing complete.",
     intervals: sorted,
   });
 
@@ -134,10 +134,10 @@ function intervalState(frame: Frame, interval: Interval) {
 
 function intervalCardClass(state: string) {
   if (state === "current") {
-    return "border-terminal-cyan bg-terminal-cyan/10 text-terminal-cyan shadow-[0_0_18px_rgba(0,220,255,0.08)]";
+    return "border-terminal-cyan bg-terminal-cyan/10 text-terminal-cyan shadow-[0_0_20px_rgba(0,220,255,0.08)]";
   }
   if (state === "chosen") {
-    return "border-primary bg-primary/10 text-primary shadow-[0_0_18px_rgba(57,255,20,0.08)]";
+    return "border-primary bg-primary/10 text-primary shadow-[0_0_20px_rgba(57,255,20,0.08)]";
   }
   if (state === "rejected") {
     return "border-terminal-amber bg-terminal-amber/10 text-terminal-amber";
@@ -172,7 +172,7 @@ function StatCard({
       : "text-primary";
 
   return (
-    <div className="border border-border bg-background/55 px-4 py-4">
+    <div className="border border-border bg-background/55 px-4 py-4 md:px-5 md:py-5">
       <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
         {title}
       </div>
@@ -221,10 +221,10 @@ function TimelineBar({
     <div className="relative h-16 border-b border-border/60 last:border-b-0">
       <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-border/80" />
       <div
-        className={`absolute top-1/2 -translate-y-1/2 border ${barClass} flex h-10 items-center justify-center px-3 text-sm font-bold`}
+        className={`absolute top-1/2 -translate-y-1/2 border ${barClass} flex h-10 items-center justify-center px-3 text-sm font-bold transition-all`}
         style={{ left: `${left}%`, width: `${Math.max(width, 8)}%` }}
       >
-        {interval.id} [{interval.start},{interval.end}]
+        {interval.id} [{interval.start}, {interval.end}]
       </div>
     </div>
   );
@@ -289,8 +289,8 @@ export default function GreedyIntervalsVisualizerPage() {
 
         <p className="mt-5 max-w-5xl text-sm md:text-base leading-8 text-muted-foreground">
           Watch the intervals get sorted by end time, then checked one by one.
-          This view makes the greedy decision rule visible: compare the current
-          interval's start with the end of the last accepted interval.
+          This version focuses on decision clarity: what is being inspected,
+          why it is accepted or rejected, and how the schedule evolves step by step.
         </p>
 
         <div className="mt-7 flex flex-wrap gap-3">
@@ -309,7 +309,7 @@ export default function GreedyIntervalsVisualizerPage() {
           </Link>
         </div>
 
-        <div className="mt-8 grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_360px]">
+        <div className="mt-8 grid gap-5 xl:grid-cols-[minmax(0,1.65fr)_360px]">
           <section className="border border-border bg-card/35">
             <div className="border-b border-border bg-secondary/55 px-5 py-3 text-sm text-muted-foreground">
               ~/visualize/greedy-intervals.ts — step {step + 1}/{frames.length}
@@ -320,9 +320,9 @@ export default function GreedyIntervalsVisualizerPage() {
                 <StatCard title="Last chosen end" value={frame.lastEnd} accent="primary" />
                 <StatCard title="Chosen count" value={String(frame.chosenIds.length)} accent="neutral" />
                 <StatCard title="Rejected count" value={String(frame.rejectedIds.length)} accent="amber" />
-                <div className="border border-border bg-background/55 px-4 py-4">
+                <div className="border border-border bg-background/55 px-4 py-4 md:px-5 md:py-5">
                   <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                    Current decision
+                    Decision state
                   </div>
                   <div className="mt-3">
                     <span className={`inline-flex border px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] ${decisionBadge(frame.decision)}`}>
@@ -332,7 +332,7 @@ export default function GreedyIntervalsVisualizerPage() {
                 </div>
               </div>
 
-              <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
+              <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
                 <div className="space-y-4">
                   <div className="border border-border bg-background/45 p-5">
                     <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
@@ -345,7 +345,7 @@ export default function GreedyIntervalsVisualizerPage() {
 
                   <div className="border border-border bg-background/45 p-5">
                     <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                      Explanation
+                      Decision reasoning
                     </div>
                     <p className="mt-3 text-sm leading-8 text-muted-foreground">
                       {frame.explanation}
@@ -360,9 +360,14 @@ export default function GreedyIntervalsVisualizerPage() {
                   <div className="mt-3 text-2xl font-bold text-terminal-cyan">
                     {frame.compareText}
                   </div>
-                  <div className="mt-4 text-sm leading-7 text-muted-foreground">
-                    Greedy only needs one condition here:
-                    current start ≥ last chosen end.
+
+                  <div className="mt-5 space-y-3 text-sm text-muted-foreground leading-7">
+                    <div className="border border-border bg-background/55 px-3 py-3">
+                      Rule: accept only if current start ≥ last chosen end.
+                    </div>
+                    <div className="border border-border bg-background/55 px-3 py-3">
+                      Earlier finishing intervals preserve more future space.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -385,14 +390,37 @@ export default function GreedyIntervalsVisualizerPage() {
                         key={interval.id}
                         className={`border p-4 transition ${intervalCardClass(state)}`}
                       >
-                        <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                          interval {interval.id}
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                              interval
+                            </div>
+                            <div className="mt-2 text-2xl font-bold">{interval.id}</div>
+                          </div>
+
+                          <div className="text-right">
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                              window
+                            </div>
+                            <div className="mt-2 text-lg font-bold">
+                              [{interval.start}, {interval.end}]
+                            </div>
+                          </div>
                         </div>
-                        <div className="mt-2 text-2xl font-bold">
-                          [{interval.start}, {interval.end}]
-                        </div>
-                        <div className="mt-2 text-xs uppercase tracking-[0.2em]">
-                          start={interval.start} · end={interval.end}
+
+                        <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                          <div className="border border-border/70 bg-background/40 px-3 py-2">
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                              start
+                            </div>
+                            <div className="mt-1 font-semibold">{interval.start}</div>
+                          </div>
+                          <div className="border border-border/70 bg-background/40 px-3 py-2">
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                              end
+                            </div>
+                            <div className="mt-1 font-semibold">{interval.end}</div>
+                          </div>
                         </div>
                       </div>
                     );
@@ -401,13 +429,21 @@ export default function GreedyIntervalsVisualizerPage() {
               </div>
 
               <div className="border border-border bg-background/45 p-5">
-                <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-                  Timeline view
+                <div className="flex items-center justify-between">
+                  <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+                    Timeline schedule lane
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    ordered by end time
+                  </div>
                 </div>
-                <div className="mt-4 border border-border bg-background/55 p-4">
-                  <div className="mb-3 flex justify-between text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+
+                <div className="mt-4 border border-border bg-background/55 p-4 md:p-5">
+                  <div className="mb-4 grid grid-cols-10 gap-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                     {Array.from({ length: 10 }).map((_, i) => (
-                      <span key={i}>{i}</span>
+                      <div key={i} className="text-center">
+                        {i}
+                      </div>
                     ))}
                   </div>
 
@@ -493,7 +529,7 @@ export default function GreedyIntervalsVisualizerPage() {
                   <div className="h-3 overflow-hidden border border-border bg-background/70">
                     <div
                       className="h-full bg-primary transition-all duration-300"
-                      style={{ width: `${((step + 1) / frames.length) * 100}%` }}
+                      style={{ width: `${progress}%` }}
                     />
                   </div>
 
@@ -514,19 +550,20 @@ export default function GreedyIntervalsVisualizerPage() {
           </section>
 
           <aside className="space-y-5">
-            <SidePanel title="Chosen schedule">
+            <SidePanel title="Accepted schedule">
               <div className="space-y-2">
                 {frame.chosenIds.length === 0 ? (
                   <div className="border border-border bg-background/55 px-3 py-3 text-sm text-muted-foreground">
                     (none yet)
                   </div>
                 ) : (
-                  frame.chosenIds.map((id) => (
+                  frame.chosenIds.map((id, idx) => (
                     <div
                       key={id}
-                      className="border border-primary bg-primary/10 px-3 py-3 text-sm font-semibold text-primary"
+                      className="flex items-center justify-between border border-primary bg-primary/10 px-3 py-3 text-sm font-semibold text-primary"
                     >
-                      {id}
+                      <span>{id}</span>
+                      <span className="text-[10px] uppercase tracking-[0.2em]">pick {idx + 1}</span>
                     </div>
                   ))
                 )}
@@ -543,31 +580,35 @@ export default function GreedyIntervalsVisualizerPage() {
                   frame.rejectedIds.map((id) => (
                     <div
                       key={id}
-                      className="border border-terminal-amber bg-terminal-amber/10 px-3 py-3 text-sm font-semibold text-terminal-amber"
+                      className="flex items-center justify-between border border-terminal-amber bg-terminal-amber/10 px-3 py-3 text-sm font-semibold text-terminal-amber"
                     >
-                      {id}
+                      <span>{id}</span>
+                      <span className="text-[10px] uppercase tracking-[0.2em]">overlap</span>
                     </div>
                   ))
                 )}
               </div>
             </SidePanel>
 
-            <SidePanel title="Greedy rule">
+            <SidePanel title="Greedy policy">
               <div className="space-y-3 text-sm leading-7 text-muted-foreground">
-                <div>1. Sort by end time.</div>
-                <div>2. Scan from smallest end to largest end.</div>
-                <div>3. Choose interval if start ≥ lastEnd.</div>
-                <div>4. Otherwise skip it.</div>
+                <div>1. Sort intervals by finishing time.</div>
+                <div>2. Process them from smallest end to largest end.</div>
+                <div>3. Accept only if start ≥ lastEnd.</div>
+                <div>4. Otherwise reject and move on.</div>
               </div>
             </SidePanel>
 
-            <SidePanel title="Why greedy works here">
+            <SidePanel title="Why this is optimal">
               <div className="space-y-3 text-sm leading-7 text-muted-foreground">
                 <div>
-                  Choosing the interval that ends earliest preserves the most future space.
+                  Finishing earlier never reduces future options.
                 </div>
                 <div>
-                  Any later-ending choice can only reduce future options, not improve them.
+                  A later-ending accepted interval can only block more intervals, not fewer.
+                </div>
+                <div>
+                  That is why earliest-finish-first is the correct greedy choice here.
                 </div>
               </div>
             </SidePanel>
