@@ -24,7 +24,7 @@ const TOPICS: Topic[] = [
   { id: "07", code: "DP1", title: "Dynamic Programming I", difficulty: "MED", problems: 20, status: "BETA", desc: "1D DP, memoization, classic recurrences", href: "/learn/dynamic-programming-1" },
   { id: "08", code: "DP2", title: "Dynamic Programming II", difficulty: "HARD", problems: 18, status: "BETA", desc: "2D DP, knapsack, interval DP, bitmask", href: "/learn/dynamic-programming-2" },
   { id: "09", code: "GRD", title: "Greedy & Intervals", difficulty: "MED", problems: 15, status: "READY", desc: "Sorting, scheduling, exchange arguments" , href: "/learn/greedy-intervals" },
-  { id: "10", code: "BIT", title: "Bit Manipulation", difficulty: "MED", problems: 12, status: "BETA", desc: "Masks, XOR tricks, subsets via bits" },
+  { id: "10", code: "BIT", title: "Bit Manipulation", difficulty: "MED", problems: 12, status: "BETA", desc: "Masks, XOR tricks, subsets via bits" , href: "/learn/bit-manipulation" },
   { id: "11", code: "ADV", title: "Advanced Graphs", difficulty: "HARD", problems: 16, status: "SOON", desc: "Dijkstra, Bellman-Ford, MST, SCC" },
   { id: "12", code: "SYS", title: "System Design Primer", difficulty: "HARD", problems: 8, status: "SOON", desc: "Caching, sharding, queues, consistency" },
 ];
