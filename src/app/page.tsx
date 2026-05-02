@@ -3,6 +3,7 @@ import { CurriculumTable } from "@/components/CurriculumTable";
 import { GraphVisualizer } from "@/components/GraphVisualizer";
 import { HeroTerminal } from "@/components/HeroTerminal";
 import { PhilosophyFlow } from "@/components/PhilosophyFlow";
+import StackQueueVisualizerPreview from "@/components/landing/StackQueueVisualizerPreview";
 
 const Stat = ({ k, v, sub }: { k: string; v: string; sub: string }) => (
   <div className="border border-border bg-card/40 p-4">
@@ -263,6 +264,7 @@ export default function Home() {
           ─── built with rustc + tsc + obsessive attention to time complexity ───
         </div>
       </footer>
-    </main>
+          <StackQueueVisualizerPreview />
+</main>
   );
 }
