@@ -1,0 +1,271 @@
+"use client";
+
+import Link from "next/link";
+import ArraysHashingPractice from "@/components/practice/ArraysHashingPractice";
+import { useState, type ReactNode } from "react";
+
+type TocItem = {
+  id: string;
+  num: string;
+  label: string;
+};
+
+type CodeExample = {
+  language: string;
+  code: string;
+};
+
+const toc: TocItem[] = [
+  { id: "root-problem", num: "01", label: "Root Problem" },
+  { id: "core-idea", num: "02", label: "Core Idea" },
+  { id: "intuition", num: "03", label: "Intuition" },
+  { id: "walkthrough", num: "04", label: "Step-by-Step Example" },
+  { id: "code", num: "05", label: "Code Implementation" },
+  { id: "complexity", num: "06", label: "Time Complexity" },
+  { id: "real-world", num: "07", label: "Real-World Uses" },
+  { id: "practice", num: "08", label: "Practice Problems" },
+];
+
+const codeExamples: CodeExample[] = [
+  {
+    language: "TypeScript",
+    code: `function twoSum(nums: number[], target: number): number[] {
+  const seen = new Map<number, number>();
+
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+
+    if (seen.has(need)) {
+      return [seen.get(need)!, i];
+    }
+
+    seen.set(nums[i], i);
+  }
+
+  return [];
+}`,
+  },
+  {
+    language: "JavaScript",
+    code: `function twoSum(nums, target) {
+  const seen = new Map();
+
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+
+    if (seen.has(need)) {
+      return [seen.get(need), i];
+    }
+
+    seen.set(nums[i], i);
+  }
+
+  return [];
+}`,
+  },
+  {
+    language: "Python",
+    code: `def two_sum(nums, target):
+    seen = {}
+
+    for i, value in enumerate(nums):
+        need = target - value
+        if need in seen:
+            return [seen[need], i]
+        seen[value] = i
+
+    return []`,
+  },
+  {
+    language: "Java",
+    code: `import java.util.*;
+
+public class ArraysHashing {
+    public static int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> seen = new HashMap<>();
+
+        for (int i = 0; i < nums.length; i++) {
+            int need = target - nums[i];
+
+            if (seen.containsKey(need)) {
+                return new int[]{seen.get(need), i};
+            }
+
+            seen.put(nums[i], i);
+        }
+
+        return new int[]{};
+    }
+}`,
+  },
+  {
+    language: "C++",
+    code: `#include <vector>
+#include <unordered_map>
+using namespace std;
+
+vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int, int> seen;
+
+    for (int i = 0; i < nums.size(); i++) {
+        int need = target - nums[i];
+
+        if (seen.count(need)) {
+            return {seen[need], i};
+        }
+
+        seen[nums[i]] = i;
+    }
+
+    return {};
+}`,
+  },
+  {
+    language: "C#",
+    code: `using System.Collections.Generic;
+
+public class ArraysHashing {
+    public static int[] TwoSum(int[] nums, int target) {
+        Dictionary<int, int> seen = new Dictionary<int, int>();
+
+        for (int i = 0; i < nums.Length; i++) {
+            int need = target - nums[i];
+
+            if (seen.ContainsKey(need)) {
+                return new int[] { seen[need], i };
+            }
+
+            seen[nums[i]] = i;
+        }
+
+        return new int[] { };
+    }
+}`,
+  },
+  {
+    language: "Go",
+    code: `func TwoSum(nums []int, target int) []int {
+    seen := map[int]int{}
+
+    for i, value := range nums {
+        need := target - value
+        if idx, ok := seen[need]; ok {
+            return []int{idx, i}
+        }
+        seen[value] = i
+    }
+
+    return []int{}
+}`,
+  },
+  {
+    language: "Rust",
+    code: `use std::collections::HashMap;
+
+fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+    let mut seen: HashMap<i32, i32> = HashMap::new();
+
+    for (i, &value) in nums.iter().enumerate() {
+        let need = target - value;
+
+        if let Some(&idx) = seen.get(&need) {
+            return vec![idx, i as i32];
+        }
+
+        seen.insert(value, i as i32);
+    }
+
+    vec![]
+}`,
+  },
+  {
+    language: "Kotlin",
+    code: `fun twoSum(nums: IntArray, target: Int): IntArray {
+    val seen = mutableMapOf<Int, Int>()
+
+    for (i in nums.indices) {
+        val need = target - nums[i]
+
+        if (need in seen) {
+            return intArrayOf(seen[need]!!, i)
+        }
+
+        seen[nums[i]] = i
+    }
+
+    return intArrayOf()
+}`,
+  },
+  {
+    language: "Swift",
+    code: `func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+    var seen: [Int: Int] = [:]
+
+    for (i, value) in nums.enumerated() {
+        let need = target - value
+
+        if let idx = seen[need] {
+            return [idx, i]
+        }
+
+        seen[value] = i
+    }
+
+    return []
+}`,
+  },
+];
+
+function Section({
+  id,
+  num,
+  title,
+  children,
+}: {
+  id: string;
+  num: string;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section id={id} className="border-b border-border py-14 scroll-mt-24">
+
+                ))}
+              </div>
+            </Section>
+
+            <div className="py-12">
+              <div className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
+                // module_actions
+              </div>
+
+              <h2 className="mt-2 text-2xl md:text-3xl font-bold">
+                Arrays & Hashing <span className="text-primary text-glow">Ready.</span>
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+                Open the visualizer or return home.
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/visualize/arrays-hashing"
+                  className="border-2 border-primary bg-primary px-5 py-3 text-sm font-bold tracking-[0.25em] text-black hover:opacity-90"
+                >
+                  ▶ OPEN_ARRAYS_VISUALIZER
+                </Link>
+
+                <Link
+                  href="/"
+                  className="border-2 border-border px-5 py-3 text-sm font-bold tracking-[0.25em] text-foreground hover:border-primary hover:text-primary transition-colors"
+                >
+                  $ BACK_TO_HOME
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

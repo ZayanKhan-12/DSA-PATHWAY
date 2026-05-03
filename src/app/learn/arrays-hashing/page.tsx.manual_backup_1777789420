@@ -1,0 +1,597 @@
+"use client";
+
+import Link from "next/link";
+import { useState, type ReactNode } from "react";
+
+type TocItem = {
+  id: string;
+  num: string;
+  label: string;
+};
+
+type CodeExample = {
+  language: string;
+  code: string;
+};
+
+const toc: TocItem[] = [
+  { id: "root-problem", num: "01", label: "Root Problem" },
+  { id: "core-idea", num: "02", label: "Core Idea" },
+  { id: "intuition", num: "03", label: "Intuition" },
+  { id: "walkthrough", num: "04", label: "Step-by-Step Example" },
+  { id: "code", num: "05", label: "Code Implementation" },
+  { id: "complexity", num: "06", label: "Time Complexity" },
+  { id: "real-world", num: "07", label: "Real-World Uses" },
+  { id: "practice", num: "08", label: "Practice Problems" },
+];
+
+const codeExamples: CodeExample[] = [
+  {
+    language: "TypeScript",
+    code: `function twoSum(nums: number[], target: number): number[] {
+  const seen = new Map<number, number>();
+
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+
+    if (seen.has(need)) {
+      return [seen.get(need)!, i];
+    }
+
+    seen.set(nums[i], i);
+  }
+
+  return [];
+}`,
+  },
+  {
+    language: "JavaScript",
+    code: `function twoSum(nums, target) {
+  const seen = new Map();
+
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+
+    if (seen.has(need)) {
+      return [seen.get(need), i];
+    }
+
+    seen.set(nums[i], i);
+  }
+
+  return [];
+}`,
+  },
+  {
+    language: "Python",
+    code: `def two_sum(nums, target):
+    seen = {}
+
+    for i, value in enumerate(nums):
+        need = target - value
+        if need in seen:
+            return [seen[need], i]
+        seen[value] = i
+
+    return []`,
+  },
+  {
+    language: "Java",
+    code: `import java.util.*;
+
+public class ArraysHashing {
+    public static int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> seen = new HashMap<>();
+
+        for (int i = 0; i < nums.length; i++) {
+            int need = target - nums[i];
+
+            if (seen.containsKey(need)) {
+                return new int[]{seen.get(need), i};
+            }
+
+            seen.put(nums[i], i);
+        }
+
+        return new int[]{};
+    }
+}`,
+  },
+  {
+    language: "C++",
+    code: `#include <vector>
+#include <unordered_map>
+using namespace std;
+
+vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int, int> seen;
+
+    for (int i = 0; i < nums.size(); i++) {
+        int need = target - nums[i];
+
+        if (seen.count(need)) {
+            return {seen[need], i};
+        }
+
+        seen[nums[i]] = i;
+    }
+
+    return {};
+}`,
+  },
+  {
+    language: "C#",
+    code: `using System.Collections.Generic;
+
+public class ArraysHashing {
+    public static int[] TwoSum(int[] nums, int target) {
+        Dictionary<int, int> seen = new Dictionary<int, int>();
+
+        for (int i = 0; i < nums.Length; i++) {
+            int need = target - nums[i];
+
+            if (seen.ContainsKey(need)) {
+                return new int[] { seen[need], i };
+            }
+
+            seen[nums[i]] = i;
+        }
+
+        return new int[] { };
+    }
+}`,
+  },
+  {
+    language: "Go",
+    code: `func TwoSum(nums []int, target int) []int {
+    seen := map[int]int{}
+
+    for i, value := range nums {
+        need := target - value
+        if idx, ok := seen[need]; ok {
+            return []int{idx, i}
+        }
+        seen[value] = i
+    }
+
+    return []int{}
+}`,
+  },
+  {
+    language: "Rust",
+    code: `use std::collections::HashMap;
+
+fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+    let mut seen: HashMap<i32, i32> = HashMap::new();
+
+    for (i, &value) in nums.iter().enumerate() {
+        let need = target - value;
+
+        if let Some(&idx) = seen.get(&need) {
+            return vec![idx, i as i32];
+        }
+
+        seen.insert(value, i as i32);
+    }
+
+    vec![]
+}`,
+  },
+  {
+    language: "Kotlin",
+    code: `fun twoSum(nums: IntArray, target: Int): IntArray {
+    val seen = mutableMapOf<Int, Int>()
+
+    for (i in nums.indices) {
+        val need = target - nums[i]
+
+        if (need in seen) {
+            return intArrayOf(seen[need]!!, i)
+        }
+
+        seen[nums[i]] = i
+    }
+
+    return intArrayOf()
+}`,
+  },
+  {
+    language: "Swift",
+    code: `func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+    var seen: [Int: Int] = [:]
+
+    for (i, value) in nums.enumerated() {
+        let need = target - value
+
+        if let idx = seen[need] {
+            return [idx, i]
+        }
+
+        seen[value] = i
+    }
+
+    return []
+}`,
+  },
+];
+
+function Section({
+  id,
+  num,
+  title,
+  children,
+}: {
+  id: string;
+  num: string;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section id={id} className="border-b border-border py-14 scroll-mt-24">
+      <div className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
+        {num} // {id.replaceAll("-", "_")}
+      </div>
+
+      <h2 className="mt-3 text-3xl md:text-4xl font-bold leading-tight">
+        <span className="text-primary text-glow">$</span> {title}
+      </h2>
+
+      <div className="mt-5 text-sm md:text-[15px] text-muted-foreground leading-relaxed space-y-4 max-w-4xl">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+export default function LearnArraysHashingPage() {
+  const [selectedLanguage, setSelectedLanguage] = useState("TypeScript");
+
+  const currentCode =
+    codeExamples.find((item) => item.language === selectedLanguage)?.code ??
+    codeExamples[0].code;
+
+  return (
+    <main className="min-h-screen">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
+        <div className="container px-4 md:px-8 h-14 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 font-bold tracking-widest text-sm">
+            <span className="h-3 w-3 bg-primary shadow-[0_0_14px_hsl(var(--primary))]" />
+            <span className="text-primary text-glow">DSA.ENGINE</span>
+          </Link>
+
+          <div className="flex items-center gap-6 text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+            <Link href="/visualize/arrays-hashing" className="hover:text-primary transition-colors">
+              // visualizer
+            </Link>
+            <Link href="/" className="hover:text-primary transition-colors">
+              // home
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <div className="container px-4 md:px-8 py-12 md:py-16">
+        <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+          learn // arrays_hashing · module 01
+        </div>
+
+        <h1 className="mt-2 text-4xl md:text-6xl font-extrabold leading-[0.95]">
+          Arrays &
+          <br />
+          <span className="text-primary text-glow">Hashing.</span>
+        </h1>
+
+        <p className="mt-5 max-w-2xl text-sm md:text-base text-muted-foreground leading-relaxed">
+          Arrays & Hashing is where efficient problem solving starts.
+          Instead of brute-force scanning every pair or recomputing frequencies repeatedly,
+          we store information as we go and use that memory to cut time complexity down hard.
+        </p>
+
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8">
+          <aside className="terminal-frame p-4 h-fit lg:sticky lg:top-20">
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+              ./table_of_contents
+            </div>
+
+            <div className="space-y-3">
+              {toc.map((item) => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <span className="text-primary font-bold">{item.num}</span>
+                  <span>{item.label}</span>
+                </a>
+
+            </div>
+
+            <Link
+              href="/visualize/arrays-hashing"
+              className="mt-6 inline-flex items-center justify-center w-full border border-primary px-4 py-3 text-xs font-bold tracking-[0.25em] text-primary hover:bg-primary hover:text-black transition-colors"
+            >
+              ▶ OPEN_VISUALIZER
+            </Link>
+          </aside>
+
+          <div>
+            <Section id="root-problem" num="01" title="The Root Problem">
+              <p>
+                Many beginner problems start with arrays: lists of numbers, characters, or strings.
+                The brute-force instinct is usually:
+              </p>
+
+              <div className="terminal-frame overflow-x-auto p-4 text-[12px] md:text-xs leading-relaxed text-foreground">
+                <pre>{`for every item:
+    compare against every other item`}</pre>
+              </div>
+
+              <p>
+                That often creates <span className="text-primary">O(n²)</span> solutions.
+                Arrays & Hashing teaches how to remember what you have already seen so you do not keep redoing work.
+              </p>
+            </Section>
+
+            <Section id="core-idea" num="02" title="Core Idea">
+              <p>
+                The two biggest ideas in this module are:
+              </p>
+
+              <div className="terminal-frame p-4">
+                <p>1. Arrays give indexed, ordered storage.</p>
+                <p>2. Hash maps / hash sets give near-constant-time lookup.</p>
+              </div>
+
+              <p>
+                Once you combine them, you can solve problems like:
+              </p>
+              <p>▸ lookup while iterating</p>
+              <p>▸ frequency counting</p>
+              <p>▸ duplicate detection</p>
+              <p>▸ grouping/anagrams</p>
+              <p>▸ prefix-sum caching</p>
+            </Section>
+
+            <Section id="intuition" num="03" title="Intuition">
+              <p>
+                Think of hashing as building a memory table while you walk through the array.
+              </p>
+
+              <div className="terminal-frame p-4">
+                <p><span className="text-primary font-semibold">Array</span> → store sequence</p>
+                <p><span className="text-primary font-semibold">Hash Map</span> → store fast memory</p>
+                <p><span className="text-primary font-semibold">Hash Set</span> → store seen/not-seen</p>
+              </div>
+
+              <p>
+                Instead of asking, “Have I seen this before?” by rescanning everything,
+                you ask the hash table once.
+              </p>
+            </Section>
+
+            <Section id="walkthrough" num="04" title="Step-by-Step Example">
+              <p>Classic example: Two Sum.</p>
+
+              <p>Input:</p>
+
+              <div className="terminal-frame overflow-x-auto p-4 text-[12px] md:text-xs leading-relaxed text-foreground">
+                <pre>{`nums = [2, 7, 11, 15]
+target = 9`}</pre>
+              </div>
+
+              <p>Walkthrough:</p>
+
+              <div className="terminal-frame overflow-x-auto p-4 text-[12px] md:text-xs leading-relaxed text-foreground">
+                <pre>{`i = 0, value = 2
+need = 7
+seen = {}
+7 not in seen
+store 2 -> 0
+
+i = 1, value = 7
+need = 2
+seen = {2: 0}
+2 is in seen
+
+answer = [0, 1]`}</pre>
+              </div>
+
+              <p>
+                Instead of checking all pairs, we used a map to find the complement instantly.
+              </p>
+            </Section>
+
+            <Section id="code" num="05" title="Code Implementation">
+              <p>
+                Below is the same Arrays & Hashing pattern shown across 10 languages using Two Sum.
+              </p>
+
+              <div className="terminal-frame p-4">
+                <p>1. Iterate once through the array</p>
+                <p>2. Compute the value you need</p>
+                <p>3. Check if that value is already in the map</p>
+                <p>4. If yes, return the answer</p>
+                <p>5. If no, store current value in the map</p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {codeExamples.map((item) => (
+                  <button
+                    key={item.language}
+                    onClick={() => setSelectedLanguage(item.language)}
+                    className={`px-4 py-2 text-xs md:text-sm border tracking-wide font-semibold transition-colors ${
+                      selectedLanguage === item.language
+                        ? "bg-primary text-black border-primary"
+                        : "border-border text-muted-foreground hover:text-primary hover:border-primary"
+                    }`}
+                  >
+                    {item.language}
+                  </button>
+
+              </div>
+
+              <div className="terminal-frame overflow-x-auto p-4 text-[12px] md:text-xs leading-relaxed text-foreground">
+                <pre className="whitespace-pre">{currentCode}</pre>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-foreground font-semibold">Code details to notice:</p>
+                <p>▸ The loop is single-pass</p>
+                <p>▸ The hash table stores value → index</p>
+                <p>▸ Lookup happens before insertion</p>
+                <p>▸ That prevents using the same element twice</p>
+              </div>
+            </Section>
+
+            <Section id="complexity" num="06" title="Time Complexity">
+              <div className="terminal-frame overflow-x-auto p-4 text-[12px] md:text-xs leading-relaxed text-foreground">
+                <pre>{`Time:  O(n)
+Space: O(n)
+
+n = length of the array`}</pre>
+              </div>
+
+              <p>
+                Let’s derive that properly.
+              </p>
+
+              <div className="space-y-4">
+                <div className="terminal-frame p-4">
+                  <h3 className="text-base font-bold text-foreground">
+                    1. Single loop over the array → O(n)
+                  </h3>
+                  <pre className="mt-4 overflow-x-auto">{`for (let i = 0; i < nums.length; i++) {
+  ...
+}`}</pre>
+                  <p className="mt-4">
+                    The loop runs once per element.
+                  </p>
+                  <pre className="mt-4 overflow-x-auto">{`T1(n) = c1 * n
+=> O(n)`}</pre>
+                </div>
+
+                <div className="terminal-frame p-4">
+                  <h3 className="text-base font-bold text-foreground">
+                    2. Hash lookup and insert are constant on average → O(1)
+                  </h3>
+                  <pre className="mt-4 overflow-x-auto">{`seen.has(need)
+seen.set(nums[i], i)`}</pre>
+                  <p className="mt-4">
+                    Average-case hash table operations are O(1), so each iteration does constant work.
+                  </p>
+                </div>
+
+                <div className="terminal-frame p-4">
+                  <h3 className="text-base font-bold text-foreground">
+                    3. Combine the work
+                  </h3>
+                  <pre className="mt-4 overflow-x-auto">{`T(n) = n * O(1)
+     = O(n)`}</pre>
+                </div>
+
+                <div className="terminal-frame p-4">
+                  <h3 className="text-base font-bold text-foreground">
+                    4. Why this beats brute force
+                  </h3>
+                  <p className="mt-4">
+                    Brute force checks all pairs:
+                  </p>
+                  <pre className="mt-4 overflow-x-auto">{`for i in range(n):
+    for j in range(i + 1, n):
+        ...`}</pre>
+                  <pre className="mt-4 overflow-x-auto">{`O(n²)`}</pre>
+                  <p className="mt-4">
+                    Hashing replaces repeated searching with direct lookup.
+                  </p>
+                </div>
+
+                <div className="terminal-frame p-4">
+                  <h3 className="text-base font-bold text-foreground">
+                    5. Space complexity → O(n)
+                  </h3>
+                  <p className="mt-4">
+                    In the worst case, the map stores every element once.
+                  </p>
+                  <pre className="mt-4 overflow-x-auto">{`Space = O(n)`}</pre>
+                </div>
+              </div>
+
+              <div className="border-l-4 border-primary pl-5 py-2">
+                <p className="text-primary font-semibold">Exam shortcut:</p>
+                <p className="mt-2">
+                  One pass through the array, O(1) average lookup/insert per step,
+                  so total time is <span className="text-foreground font-semibold">O(n)</span>.
+                </p>
+              </div>
+            </Section>
+
+            <Section id="real-world" num="07" title="Real-World Uses">
+              <div className="mt-8 flex flex-col gap-4">
+                {[
+                  ["Duplicate Detection", "Check whether IDs, usernames, or transaction codes repeat."],
+                  ["Frequency Counting", "Count words, products, clicks, or event types."],
+                  ["Caching", "Store previously computed values for fast reuse."],
+                  ["Indexing", "Map values to positions for instant access."],
+                  ["Log Analysis", "Track repeated errors or recurring request patterns."],
+                  ["Prefix Sum Queries", "Answer range-sum questions efficiently after preprocessing."],
+                ].map(([title, desc]) => (
+                  <div key={title} className="terminal-frame p-4">
+                    <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                    <p className="mt-2 text-muted-foreground">{desc}</p>
+                  </div>
+
+              </div>
+            </Section>
+
+            <Section id="practice" num="08" title="Practice Problems">
+              <div className="space-y-4">
+                {[
+                  ["Two Sum", "Classic complement lookup problem."],
+                  ["Contains Duplicate", "Hash set duplicate detection."],
+                  ["Valid Anagram", "Character frequency comparison."],
+                  ["Group Anagrams", "Hash by sorted form or frequency signature."],
+                  ["Top K Frequent Elements", "Frequency map + heap/bucket ideas."],
+                ].map(([title, desc]) => (
+                  <div key={title} className="terminal-frame p-4">
+                    <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                    <p className="mt-2 text-muted-foreground">{desc}</p>
+                  </div>
+
+              </div>
+            </Section>
+
+            <div className="py-12">
+              <div className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
+                // module_actions
+              </div>
+
+              <h2 className="mt-2 text-2xl md:text-3xl font-bold">
+                Arrays & Hashing <span className="text-primary text-glow">Ready.</span>
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+                Open the visualizer or return home.
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/visualize/arrays-hashing"
+                  className="border-2 border-primary bg-primary px-5 py-3 text-sm font-bold tracking-[0.25em] text-black hover:opacity-90"
+                >
+                  ▶ OPEN_ARRAYS_VISUALIZER
+                </Link>
+
+                <Link
+                  href="/"
+                  className="border-2 border-border px-5 py-3 text-sm font-bold tracking-[0.25em] text-foreground hover:border-primary hover:text-primary transition-colors"
+                >
+                  $ BACK_TO_HOME
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
