@@ -544,49 +544,26 @@ seen.set(nums[i], i)`}</pre>
             </Section>
 
             <Section id="practice" num="08" title="Practice Problems">
-          <div className="space-y-6">
-            <Link
+                          <Link
               href="/practice/arrays-hashing/two-sum"
-              className="block border border-border bg-card/40 p-6 transition-colors hover:border-primary hover:bg-primary/5"
+              className="block transition-colors hover:border-primary hover:bg-primary/5"
             >
-              <div className="text-2xl font-bold text-foreground">Two Sum</div>
-              <div className="mt-4 text-lg leading-8 text-muted-foreground">
-                Classic complement lookup problem.
+<div className="space-y-4">
+                {[
+                  ["Two Sum", "Classic complement lookup problem."],
+                  ["Contains Duplicate", "Hash set duplicate detection."],
+                  ["Valid Anagram", "Character frequency comparison."],
+                  ["Group Anagrams", "Hash by sorted form or frequency signature."],
+                  ["Top K Frequent Elements", "Frequency map + heap/bucket ideas."],
+                ].map(([title, desc]) => (
+                  <div key={title} className="terminal-frame p-4">
+                    <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                    <p className="mt-2 text-muted-foreground">{desc}</p>
+                  </div>
+                ))}
               </div>
             </Link>
-
-            <Link
-              href="/practice/arrays-hashing/contains-duplicate"
-              className="block border border-border bg-card/40 p-6 transition-colors hover:border-primary hover:bg-primary/5"
-            >
-              <div className="text-2xl font-bold text-foreground">Contains Duplicate</div>
-              <div className="mt-4 text-lg leading-8 text-muted-foreground">
-                Hash set duplicate detection.
-              </div>
-            </Link>
-
-            <div className="border border-border bg-card/40 p-6">
-              <div className="text-2xl font-bold text-foreground">Valid Anagram</div>
-              <div className="mt-4 text-lg leading-8 text-muted-foreground">
-                Character frequency comparison.
-              </div>
-            </div>
-
-            <div className="border border-border bg-card/40 p-6">
-              <div className="text-2xl font-bold text-foreground">Group Anagrams</div>
-              <div className="mt-4 text-lg leading-8 text-muted-foreground">
-                Hash by sorted form or frequency signature.
-              </div>
-            </div>
-
-            <div className="border border-border bg-card/40 p-6">
-              <div className="text-2xl font-bold text-foreground">Top K Frequent Elements</div>
-              <div className="mt-4 text-lg leading-8 text-muted-foreground">
-                Frequency map + heap/bucket ideas.
-              </div>
-            </div>
-          </div>
-        </Section>
+            </Section>
 
             <div className="py-12">
               <div className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">

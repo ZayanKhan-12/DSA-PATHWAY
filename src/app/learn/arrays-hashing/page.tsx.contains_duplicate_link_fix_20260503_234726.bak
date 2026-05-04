@@ -555,15 +555,12 @@ seen.set(nums[i], i)`}</pre>
               </div>
             </Link>
 
-            <Link
-              href="/practice/arrays-hashing/contains-duplicate"
-              className="block border border-border bg-card/40 p-6 transition-colors hover:border-primary hover:bg-primary/5"
-            >
+            <div className="border border-border bg-card/40 p-6">
               <div className="text-2xl font-bold text-foreground">Contains Duplicate</div>
               <div className="mt-4 text-lg leading-8 text-muted-foreground">
                 Hash set duplicate detection.
               </div>
-            </Link>
+            </div>
 
             <div className="border border-border bg-card/40 p-6">
               <div className="text-2xl font-bold text-foreground">Valid Anagram</div>
