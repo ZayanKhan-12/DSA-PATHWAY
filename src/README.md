@@ -60,3 +60,7 @@ A live deployment link will be added here once the project is publicly hosted.
 ## Screenshots
 
 Screenshots and demo GIFs will be added here to showcase the learning interface, algorithm visualizers, and practice problem flows.
+
+## Screenshots
+
+Screenshots and demo GIFs will be added here to showcase the learning interface, algorithm visualizers, and practice problem flows.
