@@ -42,3 +42,5 @@ Co-authored README update.
 Pair programming badge test.
 
 Pair programming badge test.
+
+Correct co-author badge test.
