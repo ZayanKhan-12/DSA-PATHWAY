@@ -605,7 +605,7 @@ Space = O(n)`}</pre>
               <div className="space-y-4">
                 {[
                   ["Valid Parentheses", "Pure stack matching.", "/practice/stack-queue/valid-parentheses"],
-                  ["Min Stack", "Stack with augmented state.", "/practice/stack-queue/min-stack"],
+                  ["Min Stack", "Stack with augmented state."],
                   ["Evaluate Reverse Polish Notation", "Stack-based expression evaluation."],
                   ["Daily Temperatures", "Monotonic decreasing stack."],
                   ["Implement Queue using Stacks", "Bridge stack/queue models."],

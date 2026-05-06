@@ -1,0 +1,756 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+
+type LanguageKey =
+  | "javascript"
+  | "python"
+  | "java"
+  | "cpp"
+  | "typescript"
+  | "go"
+  | "csharp"
+  | "rust";
+
+type TestCase = {
+  id: number;
+  commands: string[];
+  values: number[][];
+  expected: (number | null)[];
+};
+
+const LANGUAGES: { key: LanguageKey; label: string }[] = [
+  { key: "javascript", label: "JAVASCRIPT" },
+  { key: "python", label: "PYTHON" },
+  { key: "java", label: "JAVA" },
+  { key: "cpp", label: "C++" },
+  { key: "typescript", label: "TYPESCRIPT" },
+  { key: "go", label: "GO" },
+  { key: "csharp", label: "C#" },
+  { key: "rust", label: "RUST" },
+];
+
+const STARTER_CODE: Record<LanguageKey, string> = {
+  javascript: `class MinStack {
+  constructor() {
+    // write your answer here
+  }
+
+  push(val) {}
+
+  pop() {}
+
+  top() {
+    return 0;
+  }
+
+  getMin() {
+    return 0;
+  }
+}`,
+  python: `class MinStack:
+
+    def __init__(self):
+        # write your answer here
+        pass
+
+    def push(self, val: int) -> None:
+        pass
+
+    def pop(self) -> None:
+        pass
+
+    def top(self) -> int:
+        return 0
+
+    def getMin(self) -> int:
+        return 0`,
+  java: `class MinStack {
+
+    public MinStack() {
+        // write your answer here
+    }
+
+    public void push(int val) {
+
+    }
+
+    public void pop() {
+
+    }
+
+    public int top() {
+        return 0;
+    }
+
+    public int getMin() {
+        return 0;
+    }
+}`,
+  cpp: `class MinStack {
+public:
+    MinStack() {
+        // write your answer here
+    }
+
+    void push(int val) {
+
+    }
+
+    void pop() {
+
+    }
+
+    int top() {
+        return 0;
+    }
+
+    int getMin() {
+        return 0;
+    }
+};`,
+  typescript: `class MinStack {
+  constructor() {
+    // write your answer here
+  }
+
+  push(val: number): void {}
+
+  pop(): void {}
+
+  top(): number {
+    return 0;
+  }
+
+  getMin(): number {
+    return 0;
+  }
+}`,
+  go: `type MinStack struct {
+    // write your answer here
+}
+
+func Constructor() MinStack {
+    return MinStack{}
+}
+
+func (this *MinStack) Push(val int) {
+
+}
+
+func (this *MinStack) Pop() {
+
+}
+
+func (this *MinStack) Top() int {
+    return 0
+}
+
+func (this *MinStack) GetMin() int {
+    return 0
+}`,
+  csharp: `public class MinStack {
+
+    public MinStack() {
+        // write your answer here
+    }
+
+    public void Push(int val) {
+
+    }
+
+    public void Pop() {
+
+    }
+
+    public int Top() {
+        return 0;
+    }
+
+    public int GetMin() {
+        return 0;
+    }
+}`,
+  rust: `struct MinStack {
+    // write your answer here
+}
+
+impl MinStack {
+    fn new() -> Self {
+        Self { }
+    }
+
+    fn push(&mut self, val: i32) {
+
+    }
+
+    fn pop(&mut self) {
+
+    }
+
+    fn top(&self) -> i32 {
+        0
+    }
+
+    fn get_min(&self) -> i32 {
+        0
+    }
+}`,
+};
+
+const SOLUTION_CODE: Record<LanguageKey, string> = {
+  javascript: `class MinStack {
+  constructor() {
+    this.stack = [];
+    this.minStack = [];
+  }
+
+  push(val) {
+    this.stack.push(val);
+    const nextMin =
+      this.minStack.length === 0
+        ? val
+        : Math.min(val, this.minStack[this.minStack.length - 1]);
+    this.minStack.push(nextMin);
+  }
+
+  pop() {
+    this.stack.pop();
+    this.minStack.pop();
+  }
+
+  top() {
+    return this.stack[this.stack.length - 1];
+  }
+
+  getMin() {
+    return this.minStack[this.minStack.length - 1];
+  }
+}`,
+  python: `class MinStack:
+
+    def __init__(self):
+        self.stack = []
+        self.min_stack = []
+
+    def push(self, val: int) -> None:
+        self.stack.append(val)
+        if not self.min_stack:
+            self.min_stack.append(val)
+        else:
+            self.min_stack.append(min(val, self.min_stack[-1]))
+
+    def pop(self) -> None:
+        self.stack.pop()
+        self.min_stack.pop()
+
+    def top(self) -> int:
+        return self.stack[-1]
+
+    def getMin(self) -> int:
+        return self.min_stack[-1]`,
+  java: `class MinStack {
+    private java.util.Stack<Integer> stack;
+    private java.util.Stack<Integer> minStack;
+
+    public MinStack() {
+        stack = new java.util.Stack<>();
+        minStack = new java.util.Stack<>();
+    }
+
+    public void push(int val) {
+        stack.push(val);
+        if (minStack.isEmpty()) {
+            minStack.push(val);
+        } else {
+            minStack.push(Math.min(val, minStack.peek()));
+        }
+    }
+
+    public void pop() {
+        stack.pop();
+        minStack.pop();
+    }
+
+    public int top() {
+        return stack.peek();
+    }
+
+    public int getMin() {
+        return minStack.peek();
+    }
+}`,
+  cpp: `class MinStack {
+public:
+    stack<int> st;
+    stack<int> mn;
+
+    MinStack() {}
+
+    void push(int val) {
+        st.push(val);
+        if (mn.empty()) mn.push(val);
+        else mn.push(min(val, mn.top()));
+    }
+
+    void pop() {
+        st.pop();
+        mn.pop();
+    }
+
+    int top() {
+        return st.top();
+    }
+
+    int getMin() {
+        return mn.top();
+    }
+};`,
+  typescript: `class MinStack {
+  private stack: number[] = [];
+  private minStack: number[] = [];
+
+  push(val: number): void {
+    this.stack.push(val);
+    const nextMin =
+      this.minStack.length === 0
+        ? val
+        : Math.min(val, this.minStack[this.minStack.length - 1]);
+    this.minStack.push(nextMin);
+  }
+
+  pop(): void {
+    this.stack.pop();
+    this.minStack.pop();
+  }
+
+  top(): number {
+    return this.stack[this.stack.length - 1];
+  }
+
+  getMin(): number {
+    return this.minStack[this.minStack.length - 1];
+  }
+}`,
+  go: `type MinStack struct {
+    stack []int
+    mins  []int
+}
+
+func Constructor() MinStack {
+    return MinStack{
+        stack: []int{},
+        mins:  []int{},
+    }
+}
+
+func (this *MinStack) Push(val int) {
+    this.stack = append(this.stack, val)
+    if len(this.mins) == 0 {
+        this.mins = append(this.mins, val)
+    } else {
+        curMin := this.mins[len(this.mins)-1]
+        if val < curMin {
+            curMin = val
+        }
+        this.mins = append(this.mins, curMin)
+    }
+}
+
+func (this *MinStack) Pop() {
+    this.stack = this.stack[:len(this.stack)-1]
+    this.mins = this.mins[:len(this.mins)-1]
+}
+
+func (this *MinStack) Top() int {
+    return this.stack[len(this.stack)-1]
+}
+
+func (this *MinStack) GetMin() int {
+    return this.mins[len(this.mins)-1]
+}`,
+  csharp: `public class MinStack {
+    private Stack<int> stack = new Stack<int>();
+    private Stack<int> minStack = new Stack<int>();
+
+    public MinStack() {
+    }
+
+    public void Push(int val) {
+        stack.Push(val);
+        if (minStack.Count == 0) minStack.Push(val);
+        else minStack.Push(Math.Min(val, minStack.Peek()));
+    }
+
+    public void Pop() {
+        stack.Pop();
+        minStack.Pop();
+    }
+
+    public int Top() {
+        return stack.Peek();
+    }
+
+    public int GetMin() {
+        return minStack.Peek();
+    }
+}`,
+  rust: `struct MinStack {
+    stack: Vec<i32>,
+    mins: Vec<i32>,
+}
+
+impl MinStack {
+    fn new() -> Self {
+        Self {
+            stack: Vec::new(),
+            mins: Vec::new(),
+        }
+    }
+
+    fn push(&mut self, val: i32) {
+        self.stack.push(val);
+        let next_min = match self.mins.last() {
+            Some(&m) => m.min(val),
+            None => val,
+        };
+        self.mins.push(next_min);
+    }
+
+    fn pop(&mut self) {
+        self.stack.pop();
+        self.mins.pop();
+    }
+
+    fn top(&self) -> i32 {
+        *self.stack.last().unwrap()
+    }
+
+    fn get_min(&self) -> i32 {
+        *self.mins.last().unwrap()
+    }
+}`,
+};
+
+const TEST_CASES: TestCase[] = [
+  {
+    id: 1,
+    commands: ["MinStack", "push", "push", "push", "getMin", "pop", "top", "getMin"],
+    values: [[], [-2], [0], [-3], [], [], [], []],
+    expected: [null, null, null, null, -3, null, 0, -2],
+  },
+  {
+    id: 2,
+    commands: ["MinStack", "push", "push", "getMin", "push", "getMin", "pop", "top"],
+    values: [[], [2], [1], [], [3], [], [], []],
+    expected: [null, null, null, 1, null, 1, null, 1],
+  },
+  {
+    id: 3,
+    commands: ["MinStack", "push", "push", "push", "top", "pop", "getMin"],
+    values: [[], [5], [7], [4], [], [], []],
+    expected: [null, null, null, null, 4, null, 5],
+  },
+];
+
+function runMinStackTest(test: TestCase) {
+  const stack: number[] = [];
+  const mins: number[] = [];
+  const actual: (number | null)[] = [];
+
+  for (let i = 0; i < test.commands.length; i++) {
+    const cmd = test.commands[i];
+    const args = test.values[i];
+
+    if (cmd === "MinStack") {
+      actual.push(null);
+    } else if (cmd === "push") {
+      const val = args[0];
+      stack.push(val);
+      mins.push(mins.length === 0 ? val : Math.min(val, mins[mins.length - 1]));
+      actual.push(null);
+    } else if (cmd === "pop") {
+      stack.pop();
+      mins.pop();
+      actual.push(null);
+    } else if (cmd === "top") {
+      actual.push(stack[stack.length - 1]);
+    } else if (cmd === "getMin") {
+      actual.push(mins[mins.length - 1]);
+    }
+  }
+
+  const pass = JSON.stringify(actual) === JSON.stringify(test.expected);
+  return { actual, pass };
+}
+
+export default function MinStackPracticePage() {
+  const [language, setLanguage] = useState<LanguageKey>("javascript");
+  const [editorCode, setEditorCode] = useState<Record<LanguageKey, string>>(STARTER_CODE);
+  const [showSolution, setShowSolution] = useState(false);
+  const [selectedCase, setSelectedCase] = useState(1);
+  const [consoleOutput, setConsoleOutput] = useState("$ ready");
+  const [resultText, setResultText] = useState("Run a sample test or submit against all cases.");
+
+  const selected = TEST_CASES.find((t) => t.id === selectedCase)!;
+  const selectedRun = useMemo(() => runMinStackTest(selected), [selectedCase]);
+
+  function handleRun() {
+    const lines = [
+      "$ run.sample",
+      `case: ${selected.id}`,
+      `commands: ${JSON.stringify(selected.commands)}`,
+      `values: ${JSON.stringify(selected.values)}`,
+      `expected: ${JSON.stringify(selected.expected)}`,
+      `got: ${JSON.stringify(selectedRun.actual)}`,
+      `status: ${selectedRun.pass ? "PASS" : "FAIL"}`,
+    ];
+    setConsoleOutput(lines.join("\n"));
+    setResultText(selectedRun.pass ? `Sample Case ${selected.id}: PASS` : `Sample Case ${selected.id}: FAIL`);
+  }
+
+  function handleSubmit() {
+    const outputs: string[] = ["$ submit"];
+    let allPass = true;
+
+    for (const test of TEST_CASES) {
+      const res = runMinStackTest(test);
+      outputs.push(`case ${test.id}: ${res.pass ? "PASS" : "FAIL"}`);
+      if (!res.pass) allPass = false;
+    }
+
+    setConsoleOutput(outputs.join("\n"));
+    setResultText(
+      allPass
+        ? "All cases passed. Min stack with auxiliary min tracking works."
+        : "Some cases failed. Re-check push/pop/top/getMin behavior."
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-[1900px] px-3 py-4 md:px-5 xl:px-6">
+        <div className="mb-4 flex items-center justify-between border border-border bg-black/20 px-4 py-3 shadow-[0_0_30px_rgba(57,255,20,0.05)]">
+          <Link href="/" className="text-[10px] tracking-[0.35em] text-primary">
+            DSA.ENGINE
+          </Link>
+
+          <div className="flex items-center gap-4 md:gap-6 text-[10px] tracking-[0.35em] text-muted-foreground">
+            <Link href="/visualize/stack-queue">VISUALIZER</Link>
+            <Link href="/learn/stack-queue#practice">BACK TO LESSON</Link>
+          </div>
+        </div>
+
+        <div className="grid gap-5 xl:grid-cols-[minmax(420px,0.75fr)_minmax(980px,1.25fr)]">
+          <section className="min-h-0 overflow-hidden border border-border bg-black/10">
+            <div className="border-b border-border bg-black/20 px-4 py-4">
+              <div className="mb-3 flex flex-wrap gap-2 text-[10px] tracking-[0.25em]">
+                <span className="border border-primary px-3 py-1 text-primary">MEDIUM</span>
+                <span className="border border-primary/50 px-3 py-1 text-cyan-300">STACK</span>
+                <span className="border border-primary/50 px-3 py-1 text-cyan-300">DESIGN</span>
+              </div>
+
+              <div className="mb-4 flex items-start gap-4">
+                <div className="text-4xl md:text-5xl font-bold leading-none text-primary">$</div>
+                <div className="min-w-0">
+                  <div className="break-words text-4xl md:text-5xl font-bold tracking-tight">
+                    Min Stack
+                  </div>
+                </div>
+              </div>
+
+              <p className="max-w-3xl text-base md:text-lg leading-7 md:leading-8 text-muted-foreground">
+                Design a stack that supports push, pop, top, and retrieving the minimum
+                element in constant time.
+              </p>
+            </div>
+
+            <div className="h-[calc(100vh-230px)] min-h-[720px] overflow-y-auto px-4 py-4">
+              <div className="mb-6 text-[10px] tracking-[0.35em] text-muted-foreground">
+                DESCRIPTION
+              </div>
+
+              <div className="space-y-6 text-sm md:text-base leading-7 text-muted-foreground">
+                <p>
+                  Implement the <span className="text-foreground">MinStack</span> class:
+                </p>
+
+                <div className="terminal-frame p-4">
+                  <p><span className="text-foreground">MinStack()</span> initializes the stack.</p>
+                  <p><span className="text-foreground">push(val)</span> pushes val onto the stack.</p>
+                  <p><span className="text-foreground">pop()</span> removes the top element.</p>
+                  <p><span className="text-foreground">top()</span> returns the top element.</p>
+                  <p><span className="text-foreground">getMin()</span> returns the minimum element.</p>
+                </div>
+
+                <div className="text-[10px] tracking-[0.35em] text-muted-foreground">
+                  EXAMPLES
+                </div>
+
+                <div className="terminal-frame p-4">
+                  <div className="mb-3 text-xl md:text-2xl font-bold text-foreground">Example 1</div>
+                  <pre className="overflow-x-auto whitespace-pre-wrap text-sm md:text-base leading-7 md:leading-8">
+{`Input:
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+[[],[-2],[0],[-3],[],[],[],[]]
+
+Output:
+[null,null,null,null,-3,null,0,-2]`}
+                  </pre>
+                </div>
+
+                <div className="terminal-frame p-4">
+                  <div className="mb-3 text-xl md:text-2xl font-bold text-foreground">Constraints</div>
+                  <ul className="list-disc space-y-2 pl-6">
+                    <li>-2^31 ≤ val ≤ 2^31 - 1</li>
+                    <li>pop, top and getMin are always called on non-empty stacks</li>
+                    <li>At most 3 × 10^4 calls will be made</li>
+                    <li>Every operation must run in O(1)</li>
+                  </ul>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowSolution((v) => !v)}
+                    className="border border-primary px-4 py-3 text-xs font-bold tracking-[0.25em] text-primary transition-colors hover:bg-primary hover:text-black"
+                  >
+                    {showSolution ? "HIDE_CODE_SOLUTION" : "SHOW_CODE_SOLUTION"}
+                  </button>
+                </div>
+
+                {showSolution ? (
+                  <div className="terminal-frame p-4">
+                    <div className="mb-4 flex items-center justify-between">
+                      <div className="text-[10px] tracking-[0.35em] text-muted-foreground">
+                        SOLUTION CODE
+                      </div>
+                      <div className="text-[10px] tracking-[0.35em] text-primary">
+                        {LANGUAGES.find((l) => l.key === language)?.label}
+                      </div>
+                    </div>
+
+                    <pre className="overflow-x-auto whitespace-pre text-sm leading-7 md:leading-8">
+                      {SOLUTION_CODE[language]}
+                    </pre>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </section>
+
+          <section className="min-h-0 overflow-hidden border border-border bg-black/10">
+            <div className="border-b border-border bg-black/20 px-5 py-4">
+              <div className="flex flex-wrap gap-2">
+                {LANGUAGES.map((lang) => (
+                  <button
+                    key={lang.key}
+                    onClick={() => setLanguage(lang.key)}
+                    className={`border px-4 py-2 text-xs font-bold tracking-[0.25em] transition-colors ${
+                      language === lang.key
+                        ? "border-primary bg-primary text-black"
+                        : "border-border text-muted-foreground hover:border-primary hover:text-primary"
+                    }`}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-b border-border">
+              <div className="min-w-0 px-4 py-4">
+                <div className="mb-4 text-[10px] tracking-[0.35em] text-muted-foreground">
+                  CODE EDITOR
+                </div>
+
+                <div className="terminal-frame h-[600px] overflow-hidden p-4 shadow-[inset_0_0_20px_rgba(57,255,20,0.04)]">
+                  <textarea
+                    value={editorCode[language]}
+                    onChange={(e) =>
+                      setEditorCode((prev) => ({ ...prev, [language]: e.target.value }))
+                    }
+                    spellCheck={false}
+                    className="h-full w-full resize-none overflow-auto bg-transparent font-mono text-[13px] leading-6 text-foreground outline-none selection:bg-primary selection:text-black"
+                  />
+                </div>
+              </div>
+
+              <div className="min-w-0 border-t border-border bg-black/20 px-4 py-4">
+                <div className="mb-4 text-[10px] tracking-[0.35em] text-muted-foreground">
+                  TESTCASES
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  {TEST_CASES.map((test) => (
+                    <button
+                      key={test.id}
+                      onClick={() => setSelectedCase(test.id)}
+                      className={`block min-h-[115px] w-full border p-3 text-left transition-colors ${
+                        selectedCase === test.id
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary"
+                      }`}
+                    >
+                      <div className="mb-2 text-[10px] tracking-[0.35em] text-muted-foreground">
+                        CASE {test.id}
+                      </div>
+                      <div className="text-xs leading-6 text-muted-foreground break-all">
+                        commands: {JSON.stringify(test.commands)}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <button
+                    onClick={handleRun}
+                    className="border border-primary bg-primary px-4 py-3 text-xs font-bold tracking-[0.25em] text-black transition-opacity hover:opacity-90"
+                  >
+                    RUN
+                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    className="border border-border px-4 py-3 text-xs font-bold tracking-[0.25em] text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    SUBMIT
+                  </button>
+                </div>
+
+                <div className="mt-5 terminal-frame bg-black/20 p-5 text-base leading-8 text-muted-foreground">
+                  Use an auxiliary min stack so each push stores the current minimum.
+                </div>
+              </div>
+            </div>
+
+            <div className="grid bg-black/10 xl:grid-cols-2">
+              <div className="border-r border-border px-4 py-4">
+                <div className="mb-4 text-[10px] tracking-[0.35em] text-muted-foreground">
+                  CONSOLE
+                </div>
+                <div className="terminal-frame min-h-[210px] bg-black/20 p-4">
+                  <pre className="whitespace-pre-wrap break-words text-sm leading-7 md:leading-8">
+                    {consoleOutput}
+                  </pre>
+                </div>
+              </div>
+
+              <div className="px-4 py-4">
+                <div className="mb-4 text-[10px] tracking-[0.35em] text-muted-foreground">
+                  RESULT
+                </div>
+                <div className="terminal-frame min-h-[210px] bg-black/20 p-4 text-sm md:text-base leading-7 text-muted-foreground">
+                  <p>{resultText}</p>
+                  <p className="mt-4">Expected approach: stack + min stack</p>
+                  <p>Time: O(1) per operation</p>
+                  <p>Space: O(n)</p>
+                  <p className="mt-4">Current testcase: Case {selectedCase}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  );
+}
