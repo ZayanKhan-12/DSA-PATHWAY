@@ -38,3 +38,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Small README update for GitHub achievement Yolo LOL ;).
 
 Co-authored README update.
+
+Pair programming badge test.
