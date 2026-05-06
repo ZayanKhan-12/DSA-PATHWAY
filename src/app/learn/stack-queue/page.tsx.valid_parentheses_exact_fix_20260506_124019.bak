@@ -604,33 +604,17 @@ Space = O(n)`}</pre>
             <Section id="practice" num="08" title="Practice Problems">
               <div className="space-y-4">
                 {[
-                  ["Valid Parentheses", "Pure stack matching.", "/practice/stack-queue/valid-parentheses"],
+                  ["Valid Parentheses", "Pure stack matching."],
                   ["Min Stack", "Stack with augmented state."],
                   ["Evaluate Reverse Polish Notation", "Stack-based expression evaluation."],
                   ["Daily Temperatures", "Monotonic decreasing stack."],
                   ["Implement Queue using Stacks", "Bridge stack/queue models."],
-                ].map(([title, desc, href]) => {
-                  const content = (
-                    <>
-                      <h3 className="text-sm font-bold text-foreground">{title}</h3>
-                      <p className="mt-2 text-muted-foreground">{desc}</p>
-                    </>
-                  );
-
-                  return href ? (
-                    <Link
-                      key={title}
-                      href={href}
-                      className="terminal-frame block p-4 transition-colors hover:border-primary hover:bg-primary/5"
-                    >
-                      {content}
-                    </Link>
-                  ) : (
-                    <div key={title} className="terminal-frame p-4">
-                      {content}
-                    </div>
-                  );
-                })}
+                ].map(([title, desc]) => (
+                  <div key={title} className="terminal-frame p-4">
+                    <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                    <p className="mt-2 text-muted-foreground">{desc}</p>
+                  </div>
+                ))}
               </div>
             </Section>
 
