@@ -628,7 +628,7 @@ seen.set(ch, right)`}</pre>
           {[
             ["Longest Substring Without Repeating Characters", "Classic variable-size window.", "/practice/strings-sliding-window/longest-substring-without-repeating-characters"],
             ["Minimum Window Substring", "Shrink down to the smallest valid cover.", "/practice/strings-sliding-window/minimum-window-substring"],
-            ["Permutation in String", "Fixed-size validity window.", "/practice/strings-sliding-window/permutation-in-string"],
+            ["Permutation in String", "Fixed-size validity window.", null],
             ["Find All Anagrams in a String", "Frequency-based window matching.", null],
             ["Longest Repeating Character Replacement", "Window validity under bounded edits.", null],
           ].map(([title, desc, href]) =>
