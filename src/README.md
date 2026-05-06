@@ -44,3 +44,5 @@ Pair programming badge test.
 Pair programming badge test.
 
 Correct co-author badge test.
+
+Final co-authored badge test.
