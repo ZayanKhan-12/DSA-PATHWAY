@@ -64,3 +64,12 @@ Screenshots and demo GIFs will be added here to showcase the learning interface,
 ## Screenshots
 
 Screenshots and demo GIFs will be added here to showcase the learning interface, algorithm visualizers, and practice problem flows.
+
+## Features
+
+- Interactive DSA lessons
+- Visual algorithm walkthroughs
+- Practice problem pages
+- Step-by-step explanations
+- First-principles learning flow
+- Scalable full-stack architecture
