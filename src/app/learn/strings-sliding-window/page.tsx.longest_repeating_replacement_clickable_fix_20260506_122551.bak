@@ -630,7 +630,7 @@ seen.set(ch, right)`}</pre>
             ["Minimum Window Substring", "Shrink down to the smallest valid cover.", "/practice/strings-sliding-window/minimum-window-substring"],
             ["Permutation in String", "Fixed-size validity window.", "/practice/strings-sliding-window/permutation-in-string"],
             ["Find All Anagrams in a String", "Frequency-based window matching.", "/practice/strings-sliding-window/find-all-anagrams-in-a-string"],
-            ["Longest Repeating Character Replacement", "Window validity under bounded edits.", "/practice/strings-sliding-window/longest-repeating-character-replacement"],
+            ["Longest Repeating Character Replacement", "Window validity under bounded edits.", null],
           ].map(([title, desc, href]) =>
             href ? (
               <Link
