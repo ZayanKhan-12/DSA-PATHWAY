@@ -624,32 +624,21 @@ seen.set(ch, right)`}</pre>
             </Section>
 
             <Section id="practice" num="08" title="Practice Problems">
-        <div className="space-y-4">
-          {[
-            ["Longest Substring Without Repeating Characters", "Classic variable-size window.", "/practice/strings-sliding-window/longest-substring-without-repeating-characters"],
-            ["Minimum Window Substring", "Shrink down to the smallest valid cover.", null],
-            ["Permutation in String", "Fixed-size validity window.", null],
-            ["Find All Anagrams in a String", "Frequency-based window matching.", null],
-            ["Longest Repeating Character Replacement", "Window validity under bounded edits.", null],
-          ].map(([title, desc, href]) =>
-            href ? (
-              <Link
-                key={title}
-                href={href}
-                className="terminal-frame block p-4 transition-colors hover:border-primary hover:bg-primary/5"
-              >
-                <h3 className="text-sm font-bold text-foreground">{title}</h3>
-                <p className="mt-2 text-muted-foreground">{desc}</p>
-              </Link>
-            ) : (
-              <div key={title} className="terminal-frame p-4">
-                <h3 className="text-sm font-bold text-foreground">{title}</h3>
-                <p className="mt-2 text-muted-foreground">{desc}</p>
+              <div className="space-y-4">
+                {[
+                  ["Longest Substring Without Repeating Characters", "Classic variable-size window."],
+                  ["Minimum Window Substring", "Shrink down to the smallest valid cover."],
+                  ["Permutation in String", "Fixed-size validity window."],
+                  ["Find All Anagrams in a String", "Frequency-based window matching."],
+                  ["Longest Repeating Character Replacement", "Window validity under bounded edits."],
+                ].map(([title, desc]) => (
+                  <div key={title} className="terminal-frame p-4">
+                    <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                    <p className="mt-2 text-muted-foreground">{desc}</p>
+                  </div>
+                ))}
               </div>
-            )
-          )}
-        </div>
-      </Section>
+            </Section>
 
             <div className="py-12">
               <div className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
