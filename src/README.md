@@ -48,3 +48,5 @@ Correct co-author badge test.
 Final co-authored badge test.
 
 Verified co-author badge test.
+
+Small cleanup.
