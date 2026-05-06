@@ -48,3 +48,7 @@ Correct co-author badge test.
 Final co-authored badge test.
 
 Verified co-author badge test.
+
+## Project Overview
+
+DSA-PATHWAY is an interactive learning platform designed to teach data structures and algorithms from first principles. The goal is to help students understand why algorithms exist, what problems they solve, and how to reason through them visually before writing code.
