@@ -607,7 +607,7 @@ Space = O(n)`}</pre>
                   ["Valid Parentheses", "Pure stack matching.", "/practice/stack-queue/valid-parentheses"],
                   ["Min Stack", "Stack with augmented state.", "/practice/stack-queue/min-stack"],
                   ["Evaluate Reverse Polish Notation", "Stack-based expression evaluation.", "/practice/stack-queue/evaluate-reverse-polish-notation"],
-                  ["Daily Temperatures", "Monotonic decreasing stack.", "/practice/stack-queue/daily-temperatures"],
+                  ["Daily Temperatures", "Monotonic decreasing stack."],
                   ["Implement Queue using Stacks", "Bridge stack/queue models."],
                 ].map(([title, desc, href]) =>
                   href ? (
