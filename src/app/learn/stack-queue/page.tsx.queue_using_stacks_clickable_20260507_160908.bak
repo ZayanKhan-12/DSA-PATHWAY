@@ -608,7 +608,7 @@ Space = O(n)`}</pre>
                   ["Min Stack", "Stack with augmented state.", "/practice/stack-queue/min-stack"],
                   ["Evaluate Reverse Polish Notation", "Stack-based expression evaluation.", "/practice/stack-queue/evaluate-reverse-polish-notation"],
                   ["Daily Temperatures", "Monotonic decreasing stack.", "/practice/stack-queue/daily-temperatures"],
-                  ["Implement Queue using Stacks", "Bridge stack/queue models.", "/practice/stack-queue/implement-queue-using-stacks"],
+                  ["Implement Queue using Stacks", "Bridge stack/queue models."],
                 ].map(([title, desc, href]) =>
                   href ? (
                     <Link
