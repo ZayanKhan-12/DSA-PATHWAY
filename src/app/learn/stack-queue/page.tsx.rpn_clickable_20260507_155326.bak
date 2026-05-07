@@ -606,26 +606,31 @@ Space = O(n)`}</pre>
                 {[
                   ["Valid Parentheses", "Pure stack matching.", "/practice/stack-queue/valid-parentheses"],
                   ["Min Stack", "Stack with augmented state.", "/practice/stack-queue/min-stack"],
-                  ["Evaluate Reverse Polish Notation", "Stack-based expression evaluation.", "/practice/stack-queue/evaluate-reverse-polish-notation"],
+                  ["Evaluate Reverse Polish Notation", "Stack-based expression evaluation."],
                   ["Daily Temperatures", "Monotonic decreasing stack."],
                   ["Implement Queue using Stacks", "Bridge stack/queue models."],
-                ].map(([title, desc, href]) =>
-                  href ? (
+                ].map(([title, desc, href]) => {
+                  const content = (
+                    <>
+                      <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                      <p className="mt-2 text-muted-foreground">{desc}</p>
+                    </>
+                  );
+
+                  return href ? (
                     <Link
                       key={title}
                       href={href}
-                      className="block border border-border bg-card/40 p-4 transition-colors hover:border-primary hover:bg-primary/5"
+                      className="terminal-frame block p-4 transition-colors hover:border-primary hover:bg-primary/5"
                     >
-                      <h3 className="text-sm font-bold text-foreground">{title}</h3>
-                      <p className="mt-2 text-muted-foreground">{desc}</p>
+                      {content}
                     </Link>
                   ) : (
-                    <div key={title} className="border border-border bg-card/40 p-4">
-                      <h3 className="text-sm font-bold text-foreground">{title}</h3>
-                      <p className="mt-2 text-muted-foreground">{desc}</p>
+                    <div key={title} className="terminal-frame p-4">
+                      {content}
                     </div>
-                  )
-                )}
+                  );
+                })}
               </div>
             </Section>
 
