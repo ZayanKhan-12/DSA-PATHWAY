@@ -1,5 +1,4 @@
 "use client";
-import ClickablePracticeCardWiring from "./ClickablePracticeCardWiring";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -516,7 +515,7 @@ next`}
               <h2 className="mt-2 text-3xl md:text-5xl font-bold">$ Practice Problems</h2>
               <div className="mt-5 grid grid-cols-1 gap-4">
                 {[
-                  ["Reverse Linked List", "Canonical pointer-rewiring problem.", "/practice/linked-list/reverse-linked-list"],
+                  ["Reverse Linked List", "Canonical pointer-rewiring problem."],
                   ["Linked List Cycle", "Fast/slow pointers."],
                   ["Merge Two Sorted Lists", "Pointer stitching."],
                   ["Remove Nth Node From End", "Two-pointer gap technique."],
@@ -548,7 +547,6 @@ next`}
           </div>
         </div>
       </div>
-          <ClickablePracticeCardWiring />
     </main>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-import ClickablePracticeCardWiring from "./ClickablePracticeCardWiring";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -548,7 +547,6 @@ next`}
           </div>
         </div>
       </div>
-          <ClickablePracticeCardWiring />
     </main>
   );
 }
