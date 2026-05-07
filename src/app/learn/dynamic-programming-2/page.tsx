@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
+//need to add comments
 const codeByLanguage = {
   TypeScript: `function longestCommonSubsequence(text1: string, text2: string): number {
   const m = text1.length;
