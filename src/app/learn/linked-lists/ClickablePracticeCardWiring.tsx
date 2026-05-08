@@ -18,6 +18,11 @@ const PRACTICE_ROUTES = [
     description: "Pointer stitching",
     route: "/practice/linked-list/merge-two-sorted-lists",
   },
+  {
+    title: "Remove Nth Node From End",
+    description: "Two-pointer gap technique",
+    route: "/practice/linked-list/remove-nth-node-from-end",
+  },
 ];
 
 export default function ClickablePracticeCardWiring() {
