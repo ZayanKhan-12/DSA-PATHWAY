@@ -28,6 +28,11 @@ const PRACTICE_ROUTES = [
     description: "Fast/slow midpoint",
     route: "/practice/linked-list/middle-of-the-linked-list",
   },
+  {
+    title: "Reorder List",
+    description: "Find middle + reverse + merge",
+    route: "/practice/linked-list/reorder-list",
+  },
 ];
 
 export default function ClickablePracticeCardWiring() {
