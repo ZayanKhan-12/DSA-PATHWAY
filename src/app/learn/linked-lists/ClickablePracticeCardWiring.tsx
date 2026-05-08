@@ -13,6 +13,11 @@ const PRACTICE_ROUTES = [
     description: "Fast/slow pointers",
     route: "/practice/linked-list/linked-list-cycle",
   },
+  {
+    title: "Merge Two Sorted Lists",
+    description: "Pointer stitching",
+    route: "/practice/linked-list/merge-two-sorted-lists",
+  },
 ];
 
 export default function ClickablePracticeCardWiring() {
