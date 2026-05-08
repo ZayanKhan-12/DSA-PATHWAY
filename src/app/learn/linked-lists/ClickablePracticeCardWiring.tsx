@@ -23,6 +23,11 @@ const PRACTICE_ROUTES = [
     description: "Two-pointer gap technique",
     route: "/practice/linked-list/remove-nth-node-from-end",
   },
+  {
+    title: "Middle of the Linked List",
+    description: "Fast/slow midpoint",
+    route: "/practice/linked-list/middle-of-the-linked-list",
+  },
 ];
 
 export default function ClickablePracticeCardWiring() {
