@@ -2,56 +2,64 @@
 
 import { useEffect } from "react";
 
+const PRACTICE_ROUTES = [
+  {
+    title: "Reverse Linked List",
+    description: "Canonical pointer-rewiring problem",
+    route: "/practice/linked-list/reverse-linked-list",
+  },
+  {
+    title: "Linked List Cycle",
+    description: "Fast/slow pointers",
+    route: "/practice/linked-list/linked-list-cycle",
+  },
+];
+
 export default function ClickablePracticeCardWiring() {
   useEffect(() => {
-    const route = "/practice/linked-list/reverse-linked-list";
-
-    const wireCard = () => {
+    const wireCards = () => {
       const cards = Array.from(
-        document.querySelectorAll<HTMLElement>(".terminal-frame")
+        document.querySelectorAll<HTMLElement>(".terminal-frame, .border")
       );
 
-      const target = cards.find((card) => {
-        const text = (card.textContent || "").replace(/\s+/g, " ").trim();
-        return (
-          text.includes("Reverse Linked List") &&
-          text.includes("Canonical pointer-rewiring problem")
+      for (const item of PRACTICE_ROUTES) {
+        const target = cards.find((card) => {
+          const text = (card.textContent || "").replace(/\s+/g, " ").trim();
+          return text.includes(item.title) && text.includes(item.description);
+        });
+
+        if (!target) continue;
+        if (target.dataset.practiceCardWired === item.title) continue;
+
+        target.dataset.practiceCardWired = item.title;
+        target.style.cursor = "pointer";
+        target.setAttribute("role", "link");
+        target.setAttribute("tabindex", "0");
+
+        target.classList.add(
+          "block",
+          "transition-colors",
+          "hover:border-primary",
+          "hover:bg-primary/5"
         );
-      });
 
-      if (!target) return false;
-      if (target.dataset.reverseLinkedListWired === "true") return true;
+        target.addEventListener("click", () => {
+          window.location.href = item.route;
+        });
 
-      target.dataset.reverseLinkedListWired = "true";
-      target.style.cursor = "pointer";
-      target.setAttribute("role", "link");
-      target.setAttribute("tabindex", "0");
-
-      target.classList.add(
-        "block",
-        "transition-colors",
-        "hover:border-primary",
-        "hover:bg-primary/5"
-      );
-
-      target.addEventListener("click", () => {
-        window.location.href = route;
-      });
-
-      target.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          window.location.href = route;
-        }
-      });
-
-      return true;
+        target.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            window.location.href = item.route;
+          }
+        });
+      }
     };
 
-    wireCard();
+    wireCards();
 
     const timers = [150, 400, 900, 1600].map((ms) =>
-      window.setTimeout(wireCard, ms)
+      window.setTimeout(wireCards, ms)
     );
 
     return () => {
