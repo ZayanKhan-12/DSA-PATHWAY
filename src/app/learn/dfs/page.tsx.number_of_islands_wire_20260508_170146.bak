@@ -1,6 +1,5 @@
 import Link from "next/link";
 import DFSCodeTabs from "@/components/DFSCodeTabs";
-import NumberOfIslandsCardWiring from "./NumberOfIslandsCardWiring";
 
 const Section = ({
   id,
@@ -360,7 +359,6 @@ E = number of edges`}</Code>
           </div>
         </div>
       </section>
-          <NumberOfIslandsCardWiring />
     </main>
   );
 }
