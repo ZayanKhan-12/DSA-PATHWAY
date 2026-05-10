@@ -4,7 +4,6 @@ import BFSNumberOfIslandsCardWiring from "./BFSNumberOfIslandsCardWiring";
 import RottingOrangesCardWiring from "./RottingOrangesCardWiring";
 import WordLadderCardWiring from "./WordLadderCardWiring";
 import ShortestPathBinaryMatrixCardWiring from "./ShortestPathBinaryMatrixCardWiring";
-import OpenTheLockCardWiring from "./OpenTheLockCardWiring";
 
 const Section = ({
   id,
@@ -443,7 +442,6 @@ first time you reach target = shortest path`}</Code>
           <RottingOrangesCardWiring />
           <WordLadderCardWiring />
           <ShortestPathBinaryMatrixCardWiring />
-          <OpenTheLockCardWiring />
     </main>
   );
 }
