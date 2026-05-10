@@ -1,6 +1,5 @@
 import Link from "next/link";
 import BFSCodeTabs from "@/components/BFSCodeTabs";
-import BFSNumberOfIslandsCardWiring from "./BFSNumberOfIslandsCardWiring";
 
 const Section = ({
   id,
@@ -435,7 +434,6 @@ first time you reach target = shortest path`}</Code>
           </div>
         </div>
       </section>
-          <BFSNumberOfIslandsCardWiring />
     </main>
   );
 }
