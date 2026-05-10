@@ -4,7 +4,6 @@ import NumberOfIslandsCardWiring from "./NumberOfIslandsCardWiring";
 import MaxAreaOfIslandCardWiring from "./MaxAreaOfIslandCardWiring";
 import CourseScheduleCardWiring from "./CourseScheduleCardWiring";
 import CloneGraphCardWiring from "./CloneGraphCardWiring";
-import SurroundedRegionsCardWiring from "./SurroundedRegionsCardWiring";
 
 const Section = ({
   id,
@@ -368,7 +367,6 @@ E = number of edges`}</Code>
           <MaxAreaOfIslandCardWiring />
           <CourseScheduleCardWiring />
           <CloneGraphCardWiring />
-          <SurroundedRegionsCardWiring />
     </main>
   );
 }
