@@ -3,7 +3,6 @@ import DFSCodeTabs from "@/components/DFSCodeTabs";
 import NumberOfIslandsCardWiring from "./NumberOfIslandsCardWiring";
 import MaxAreaOfIslandCardWiring from "./MaxAreaOfIslandCardWiring";
 import CourseScheduleCardWiring from "./CourseScheduleCardWiring";
-import CloneGraphCardWiring from "./CloneGraphCardWiring";
 
 const Section = ({
   id,
@@ -366,7 +365,6 @@ E = number of edges`}</Code>
           <NumberOfIslandsCardWiring />
           <MaxAreaOfIslandCardWiring />
           <CourseScheduleCardWiring />
-          <CloneGraphCardWiring />
     </main>
   );
 }
