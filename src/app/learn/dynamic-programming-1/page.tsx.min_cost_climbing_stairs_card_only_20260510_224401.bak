@@ -1,7 +1,5 @@
 "use client";
 import HouseRobberCardWiring from "./HouseRobberCardWiring";
-import MinCostClimbingStairsCardWiring from "./MinCostClimbingStairsCardWiring";
-import FibonacciNumberCardWiring from "./FibonacciNumberCardWiring";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -479,8 +477,6 @@ dp[i] = max(take, skip)`}
         </div>
       </div>
           <HouseRobberCardWiring />
-          <MinCostClimbingStairsCardWiring />
-          <FibonacciNumberCardWiring />
     </main>
   );
 }
