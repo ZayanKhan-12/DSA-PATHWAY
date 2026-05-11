@@ -1,5 +1,4 @@
 "use client";
-import LongestCommonSubsequenceCardWiring from "./LongestCommonSubsequenceCardWiring";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -501,7 +500,6 @@ dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])`}
           </div>
         </div>
       </div>
-          <LongestCommonSubsequenceCardWiring />
     </main>
   );
 }
