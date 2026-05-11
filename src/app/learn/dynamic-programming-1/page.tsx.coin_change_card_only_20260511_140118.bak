@@ -3,7 +3,6 @@ import HouseRobberCardWiring from "./HouseRobberCardWiring";
 import MinCostClimbingStairsCardWiring from "./MinCostClimbingStairsCardWiring";
 import FibonacciNumberCardWiring from "./FibonacciNumberCardWiring";
 import DecodeWaysCardWiring from "./DecodeWaysCardWiring";
-import CoinChangeCardWiring from "./CoinChangeCardWiring";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -484,7 +483,6 @@ dp[i] = max(take, skip)`}
           <MinCostClimbingStairsCardWiring />
           <FibonacciNumberCardWiring />
           <DecodeWaysCardWiring />
-          <CoinChangeCardWiring />
     </main>
   );
 }
