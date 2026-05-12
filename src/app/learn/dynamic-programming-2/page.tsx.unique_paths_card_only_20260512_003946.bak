@@ -2,7 +2,6 @@
 import LongestCommonSubsequenceCardWiring from "./LongestCommonSubsequenceCardWiring";
 import EditDistanceCardWiring from "./EditDistanceCardWiring";
 import ZeroOneKnapsackCardWiring from "./ZeroOneKnapsackCardWiring";
-import UniquePathsCardWiring from "./UniquePathsCardWiring";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -507,7 +506,6 @@ dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])`}
           <LongestCommonSubsequenceCardWiring />
           <EditDistanceCardWiring />
           <ZeroOneKnapsackCardWiring />
-          <UniquePathsCardWiring />
     </main>
   );
 }
