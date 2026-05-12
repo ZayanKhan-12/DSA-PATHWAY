@@ -1,0 +1,423 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+
+export type LanguageKey =
+  | "javascript"
+  | "python"
+  | "java"
+  | "cpp"
+  | "typescript"
+  | "go"
+  | "csharp"
+  | "rust";
+
+export type PracticeTestCase<TInput = unknown> = {
+  id: number;
+  displayLines: string[];
+  input: TInput;
+  expectedSummary: string;
+};
+
+export type ExecuteResult = {
+  pass: boolean;
+  actualSummary: string;
+  error?: string;
+};
+
+type InfoSection = {
+  title: string;
+  bodyLines: string[];
+};
+
+type Props<TInput = unknown> = {
+  title: string;
+  difficultyLabel: string;
+  difficultyClassName: string;
+  tags: string[];
+  lessonHref: string;
+  description: string;
+  starterJavaScript: string;
+  solutionJavaScript: string;
+  infoSections: InfoSection[];
+  testCases: PracticeTestCase<TInput>[];
+  executeCase: (code: string, testCase: PracticeTestCase<TInput>) => ExecuteResult;
+  resultMetaLines: string[];
+};
+
+const LANGUAGES: { key: LanguageKey; label: string }[] = [
+  { key: "javascript", label: "JAVASCRIPT" },
+  { key: "python", label: "PYTHON" },
+  { key: "java", label: "JAVA" },
+  { key: "cpp", label: "C++" },
+  { key: "typescript", label: "TYPESCRIPT" },
+  { key: "go", label: "GO" },
+  { key: "csharp", label: "C#" },
+  { key: "rust", label: "RUST" },
+];
+
+function buildPreviewCode(title: string, language: LanguageKey) {
+  const label = LANGUAGES.find((item) => item.key === language)?.label ?? language.toUpperCase();
+
+  return [
+    `${label} preview for ${title}`,
+    "",
+    "This tab is an editable preview only.",
+    "Switch to JAVASCRIPT to run local tests.",
+    "",
+    "You can still type notes or your own code here.",
+  ].join("\n");
+}
+
+export default function SimpleJsPracticePage<TInput>({
+  title,
+  difficultyLabel,
+  difficultyClassName,
+  tags,
+  lessonHref,
+  description,
+  starterJavaScript,
+  solutionJavaScript,
+  infoSections,
+  testCases,
+  executeCase,
+  resultMetaLines,
+}: Props<TInput>) {
+  const [language, setLanguage] = useState<LanguageKey>("javascript");
+  const [selectedCaseId, setSelectedCaseId] = useState<number>(testCases[0]?.id ?? 1);
+  const [showSolution, setShowSolution] = useState(false);
+  const [consoleOutput, setConsoleOutput] = useState("$ ready");
+  const [resultText, setResultText] = useState("Run your JavaScript solution against the sample tests.");
+  const [editorCodeByLanguage, setEditorCodeByLanguage] = useState<Record<LanguageKey, string>>({
+    javascript: starterJavaScript,
+    python: buildPreviewCode(title, "python"),
+    java: buildPreviewCode(title, "java"),
+    cpp: buildPreviewCode(title, "cpp"),
+    typescript: buildPreviewCode(title, "typescript"),
+    go: buildPreviewCode(title, "go"),
+    csharp: buildPreviewCode(title, "csharp"),
+    rust: buildPreviewCode(title, "rust"),
+  });
+
+  const selectedCase = useMemo(
+    () => testCases.find((item) => item.id === selectedCaseId) ?? testCases[0],
+    [selectedCaseId, testCases]
+  );
+
+  function updateEditor(value: string) {
+    setEditorCodeByLanguage((prev) => ({
+      ...prev,
+      [language]: value,
+    }));
+  }
+
+  function loadSolution() {
+    if (language !== "javascript") {
+      setEditorCodeByLanguage((prev) => ({
+        ...prev,
+        [language]: buildPreviewCode(title, language),
+      }));
+      setConsoleOutput(`$ loaded ${language.toUpperCase()} preview`);
+      setResultText(`${language.toUpperCase()} is preview-only on this page.`);
+      return;
+    }
+
+    setEditorCodeByLanguage((prev) => ({
+      ...prev,
+      javascript: solutionJavaScript,
+    }));
+    setConsoleOutput("$ loaded JAVASCRIPT solution");
+    setResultText("Loaded runnable JavaScript solution.");
+  }
+
+  function runSelectedCase() {
+    if (!selectedCase) return;
+
+    if (language !== "javascript") {
+      setConsoleOutput(
+        [
+          "$ run.sample",
+          `language: ${language.toUpperCase()}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
+      setResultText(`${language.toUpperCase()} is preview-only on this page.`);
+      return;
+    }
+
+    const result = executeCase(editorCodeByLanguage.javascript, selectedCase);
+
+    setConsoleOutput(
+      [
+        "$ run.sample",
+        `case: ${selectedCase.id}`,
+        ...selectedCase.displayLines,
+        `expected: ${selectedCase.expectedSummary}`,
+        `got: ${result.error ? "runtime error" : result.actualSummary}`,
+        `status: ${result.pass ? "PASS" : "FAIL"}`,
+        result.error ? `error: ${result.error}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n")
+    );
+
+    setResultText(result.pass ? `Case ${selectedCase.id} passed.` : `Case ${selectedCase.id} failed.`);
+  }
+
+  function submitAllCases() {
+    if (language !== "javascript") {
+      setConsoleOutput(
+        [
+          "$ submit",
+          `language: ${language.toUpperCase()}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
+      setResultText(`${language.toUpperCase()} is preview-only on this page.`);
+      return;
+    }
+
+    const lines: string[] = ["$ submit"];
+    let passed = 0;
+
+    for (const testCase of testCases) {
+      const result = executeCase(editorCodeByLanguage.javascript, testCase);
+
+      if (result.pass) {
+        passed += 1;
+        lines.push(`case ${testCase.id}: PASS`);
+      } else {
+        lines.push(`case ${testCase.id}: FAIL`);
+        lines.push(`  expected: ${testCase.expectedSummary}`);
+        lines.push(`  got: ${result.error ? "runtime error" : result.actualSummary}`);
+        if (result.error) lines.push(`  error: ${result.error}`);
+      }
+    }
+
+    lines.push("");
+    lines.push(`passed: ${passed}/${testCases.length}`);
+
+    setConsoleOutput(lines.join("\n"));
+
+    if (passed === testCases.length) {
+      setResultText("Accepted. All test cases passed.");
+    } else if (passed === 0) {
+      setResultText("Not accepted yet. Implement the JavaScript solution, then submit again.");
+    } else {
+      setResultText(`Wrong Answer. ${passed}/${testCases.length} cases passed.`);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-[1740px] px-4 py-4">
+        <div className="mb-4 flex h-14 items-center justify-between border border-border bg-black/30 px-5">
+          <Link href="/" className="text-[10px] font-bold tracking-[0.35em] text-primary">
+            DSA.ENGINE
+          </Link>
+
+          <Link
+            href={lessonHref}
+            className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground hover:text-primary"
+          >
+            BACK TO LESSON
+          </Link>
+        </div>
+
+        <div className="grid h-[calc(100vh-96px)] min-h-[760px] gap-4 xl:grid-cols-[0.8fr_1.2fr]">
+          <section className="flex min-h-0 flex-col overflow-hidden border border-border bg-black/20">
+            <div className="border-b border-border bg-black/20 px-5 py-4">
+              <div className="mb-3 flex flex-wrap gap-2">
+                <span className={`border px-3 py-1 text-[10px] font-bold tracking-[0.25em] ${difficultyClassName}`}>
+                  {difficultyLabel}
+                </span>
+
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="border border-border px-3 py-1 text-[10px] font-bold tracking-[0.25em] text-muted-foreground"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mb-3 flex items-center gap-3">
+                <span className="text-5xl font-bold leading-none text-primary">$</span>
+                <h1 className="text-4xl font-bold tracking-tight md:text-5xl">{title}</h1>
+              </div>
+
+              <p className="max-w-3xl text-sm leading-7 text-muted-foreground md:text-base">{description}</p>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4">
+              {infoSections.map((section) => (
+                <div key={section.title} className="mb-5">
+                  <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">
+                    {section.title}
+                  </div>
+
+                  <div className="terminal-frame p-4">
+                    {section.bodyLines.map((line, index) => (
+                      <p key={index} className={index === 0 ? "text-sm leading-7 text-muted-foreground" : "mt-2 text-sm leading-7 text-muted-foreground"}>
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <button
+                onClick={() => setShowSolution((value) => !value)}
+                className="border border-primary px-4 py-2 text-[10px] font-bold tracking-[0.25em] text-primary transition-colors hover:bg-primary hover:text-black"
+              >
+                {showSolution ? "HIDE_CODE_SOLUTION" : "SHOW_CODE_SOLUTION"}
+              </button>
+
+              {showSolution ? (
+                <div className="terminal-frame mt-5 p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="text-[10px] font-bold tracking-[0.35em] text-muted-foreground">SOLUTION</span>
+                    <span className="text-[10px] font-bold tracking-[0.35em] text-primary">
+                      {language === "javascript" ? "JAVASCRIPT" : `${language.toUpperCase()} PREVIEW`}
+                    </span>
+                  </div>
+
+                  <pre className="overflow-x-auto whitespace-pre-wrap text-xs leading-6 md:text-sm">
+                    {language === "javascript" ? solutionJavaScript : buildPreviewCode(title, language)}
+                  </pre>
+                </div>
+              ) : null}
+            </div>
+          </section>
+
+          <section className="flex min-h-0 flex-col overflow-hidden border border-border bg-black/20">
+            <div className="border-b border-border bg-black/30 px-4 py-3">
+              <div className="flex flex-wrap gap-2">
+                {LANGUAGES.map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => setLanguage(item.key)}
+                    className={`border px-3 py-2 text-[10px] font-bold tracking-[0.22em] transition-colors ${
+                      language === item.key
+                        ? "border-primary bg-primary text-black"
+                        : "border-border text-muted-foreground hover:border-primary hover:text-primary"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid min-h-0 flex-1 border-b border-border xl:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="flex min-h-0 flex-col border-r border-border px-4 py-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="text-[10px] font-bold tracking-[0.35em] text-muted-foreground">CODE EDITOR</div>
+
+                  <button
+                    onClick={loadSolution}
+                    className="border border-border px-3 py-1.5 text-[10px] font-bold tracking-[0.22em] text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    LOAD SOLUTION
+                  </button>
+                </div>
+
+                <div className="terminal-frame min-h-0 flex-1 overflow-hidden p-4">
+                  <textarea
+                    value={editorCodeByLanguage[language]}
+                    onChange={(event) => updateEditor(event.target.value)}
+                    spellCheck={false}
+                    className="h-full w-full resize-none overflow-auto bg-transparent font-mono text-[13px] leading-6 text-foreground outline-none selection:bg-primary selection:text-black"
+                  />
+                </div>
+              </div>
+
+              <aside className="flex min-h-0 flex-col px-4 py-4">
+                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">TESTCASES</div>
+
+                <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+                  {testCases.map((testCase) => (
+                    <button
+                      key={testCase.id}
+                      onClick={() => setSelectedCaseId(testCase.id)}
+                      className={`block w-full border p-3 text-left transition-colors ${
+                        selectedCaseId === testCase.id
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary"
+                      }`}
+                    >
+                      <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-muted-foreground">
+                        CASE {testCase.id}
+                      </div>
+
+                      <div className="text-xs leading-5 text-muted-foreground">
+                        {testCase.displayLines.map((line, index) => (
+                          <p key={index} className="break-all">
+                            {line}
+                          </p>
+                        ))}
+                        <p className="mt-2 text-foreground">expected: {testCase.expectedSummary}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <button
+                    onClick={runSelectedCase}
+                    className="border border-primary bg-primary px-4 py-3 text-[10px] font-bold tracking-[0.25em] text-black transition-opacity hover:opacity-90"
+                  >
+                    RUN
+                  </button>
+
+                  <button
+                    onClick={submitAllCases}
+                    className="border border-border px-4 py-3 text-[10px] font-bold tracking-[0.25em] text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    SUBMIT
+                  </button>
+                </div>
+
+                <div className="terminal-frame mt-3 p-3 text-xs leading-6 text-muted-foreground">
+                  JavaScript runs real local tests. Other languages are editable previews.
+                </div>
+              </aside>
+            </div>
+
+            <div className="grid h-[210px] flex-none xl:grid-cols-2">
+              <div className="border-r border-border px-4 py-4">
+                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">CONSOLE</div>
+
+                <div className="terminal-frame h-[150px] overflow-auto p-3">
+                  <pre className="whitespace-pre-wrap break-words text-xs leading-6">{consoleOutput}</pre>
+                </div>
+              </div>
+
+              <div className="px-4 py-4">
+                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">RESULT</div>
+
+                <div className="terminal-frame h-[150px] overflow-auto p-3 text-xs leading-6 text-muted-foreground">
+                  <p>{resultText}</p>
+                  {resultMetaLines.map((line, index) => (
+                    <p key={index} className={index === 0 ? "mt-3" : ""}>
+                      {line}
+                    </p>
+                  ))}
+                  <p className="mt-3">Current testcase: Case {selectedCaseId}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  );
+}

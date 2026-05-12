@@ -1,7 +1,4 @@
 "use client";
-import MaximumNonOverlappingIntervalsCardWiring from "./MaximumNonOverlappingIntervalsCardWiring";
-import MinimumArrowsToBurstBalloonsCardWiring from "./MinimumArrowsToBurstBalloonsCardWiring";
-import GreedyIntervalPracticeCardsWiring from "./GreedyIntervalPracticeCardsWiring";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -455,9 +452,6 @@ export default function GreedyIntervalsPage() {
           </section>
         </div>
       </div>
-          <MaximumNonOverlappingIntervalsCardWiring />
-          <MinimumArrowsToBurstBalloonsCardWiring />
-          <GreedyIntervalPracticeCardsWiring />
     </main>
   );
 }
