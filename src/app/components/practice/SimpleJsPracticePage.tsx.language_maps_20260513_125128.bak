@@ -40,8 +40,6 @@ type Props<TInput = unknown> = {
   description: string;
   starterJavaScript: string;
   solutionJavaScript: string;
-  starterCodeByLanguage?: Partial<Record<LanguageKey, string>>;
-  solutionCodeByLanguage?: Partial<Record<LanguageKey, string>>;
   infoSections: InfoSection[];
   testCases: PracticeTestCase<TInput>[];
   executeCase: (code: string, testCase: PracticeTestCase<TInput>) => ExecuteResult;
@@ -72,42 +70,6 @@ function buildPreviewCode(title: string, language: LanguageKey) {
   ].join("\n");
 }
 
-
-function getLanguageLabel(language: LanguageKey) {
-  return LANGUAGES.find((item) => item.key === language)?.label ?? language.toUpperCase();
-}
-
-function buildPreviewConsole(command: "run.sample" | "submit", language: LanguageKey) {
-  const label = getLanguageLabel(language);
-
-  return [
-    `$ ${command}`,
-    `language: ${label}`,
-    "mode: editable preview",
-    "",
-    `${label} code is available to read, edit, and copy.`,
-    "Local browser tests run in JavaScript only.",
-    "Switch to JAVASCRIPT to run or submit test cases.",
-  ].join("\n");
-}
-
-function buildCodeMap(
-  title: string,
-  javascriptCode: string,
-  codeByLanguage?: Partial<Record<LanguageKey, string>>
-): Record<LanguageKey, string> {
-  return {
-    javascript: codeByLanguage?.javascript ?? javascriptCode,
-    python: codeByLanguage?.python ?? buildPreviewCode(title, "python"),
-    java: codeByLanguage?.java ?? buildPreviewCode(title, "java"),
-    cpp: codeByLanguage?.cpp ?? buildPreviewCode(title, "cpp"),
-    typescript: codeByLanguage?.typescript ?? buildPreviewCode(title, "typescript"),
-    go: codeByLanguage?.go ?? buildPreviewCode(title, "go"),
-    csharp: codeByLanguage?.csharp ?? buildPreviewCode(title, "csharp"),
-    rust: codeByLanguage?.rust ?? buildPreviewCode(title, "rust"),
-  };
-}
-
 export default function SimpleJsPracticePage<TInput>({
   title,
   difficultyLabel,
@@ -117,29 +79,26 @@ export default function SimpleJsPracticePage<TInput>({
   description,
   starterJavaScript,
   solutionJavaScript,
-  starterCodeByLanguage,
-  solutionCodeByLanguage,
   infoSections,
   testCases,
   executeCase,
   resultMetaLines,
 }: Props<TInput>) {
-  const starterMap = useMemo(
-    () => buildCodeMap(title, starterJavaScript, starterCodeByLanguage),
-    [title, starterJavaScript, starterCodeByLanguage]
-  );
-
-  const solutionMap = useMemo(
-    () => buildCodeMap(title, solutionJavaScript, solutionCodeByLanguage),
-    [title, solutionJavaScript, solutionCodeByLanguage]
-  );
-
   const [language, setLanguage] = useState<LanguageKey>("javascript");
   const [selectedCaseId, setSelectedCaseId] = useState<number>(testCases[0]?.id ?? 1);
   const [showSolution, setShowSolution] = useState(false);
   const [consoleOutput, setConsoleOutput] = useState("$ ready");
   const [resultText, setResultText] = useState("Run your JavaScript solution against the sample tests.");
-  const [editorCodeByLanguage, setEditorCodeByLanguage] = useState<Record<LanguageKey, string>>(starterMap);
+  const [editorCodeByLanguage, setEditorCodeByLanguage] = useState<Record<LanguageKey, string>>({
+    javascript: starterJavaScript,
+    python: buildPreviewCode(title, "python"),
+    java: buildPreviewCode(title, "java"),
+    cpp: buildPreviewCode(title, "cpp"),
+    typescript: buildPreviewCode(title, "typescript"),
+    go: buildPreviewCode(title, "go"),
+    csharp: buildPreviewCode(title, "csharp"),
+    rust: buildPreviewCode(title, "rust"),
+  });
 
   const selectedCase = useMemo(
     () => testCases.find((item) => item.id === selectedCaseId) ?? testCases[0],
@@ -154,40 +113,39 @@ export default function SimpleJsPracticePage<TInput>({
   }
 
   function loadSolution() {
+    if (language !== "javascript") {
+      setEditorCodeByLanguage((prev) => ({
+        ...prev,
+        [language]: buildPreviewCode(title, language),
+      }));
+      setConsoleOutput(`$ loaded ${language.toUpperCase()} preview`);
+      setResultText(`${language.toUpperCase()} is preview-only on this page.`);
+      return;
+    }
+
     setEditorCodeByLanguage((prev) => ({
       ...prev,
-      [language]: solutionMap[language],
+      javascript: solutionJavaScript,
     }));
-
-    if (language === "javascript") {
-      setConsoleOutput("$ loaded JAVASCRIPT solution");
-      setResultText("Loaded runnable JavaScript solution.");
-    } else {
-      const label = getLanguageLabel(language);
-
-      setConsoleOutput(
-        [
-          "$ load.solution",
-          `language: ${label}`,
-          "mode: editable preview",
-          "",
-          `${label} solution loaded into the editor.`,
-          "Switch to JAVASCRIPT to run local test cases.",
-        ].join("\n")
-      );
-
-      setResultText(`${label} solution loaded as an editable preview.`);
-    }
+    setConsoleOutput("$ loaded JAVASCRIPT solution");
+    setResultText("Loaded runnable JavaScript solution.");
   }
 
   function runSelectedCase() {
     if (!selectedCase) return;
 
     if (language !== "javascript") {
-      const label = getLanguageLabel(language);
-
-      setConsoleOutput(buildPreviewConsole("run.sample", language));
-      setResultText(`${label} is editable preview only. JavaScript runs the local tests.`);
+      setConsoleOutput(
+        [
+          "$ run.sample",
+          `language: ${language.toUpperCase()}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
+      setResultText(`${language.toUpperCase()} is preview-only on this page.`);
       return;
     }
 
@@ -212,10 +170,17 @@ export default function SimpleJsPracticePage<TInput>({
 
   function submitAllCases() {
     if (language !== "javascript") {
-      const label = getLanguageLabel(language);
-
-      setConsoleOutput(buildPreviewConsole("submit", language));
-      setResultText(`${label} is editable preview only. JavaScript runs the local tests.`);
+      setConsoleOutput(
+        [
+          "$ submit",
+          `language: ${language.toUpperCase()}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
+      setResultText(`${language.toUpperCase()} is preview-only on this page.`);
       return;
     }
 
@@ -301,14 +266,7 @@ export default function SimpleJsPracticePage<TInput>({
 
                   <div className="terminal-frame p-4">
                     {section.bodyLines.map((line, index) => (
-                      <p
-                        key={index}
-                        className={
-                          index === 0
-                            ? "text-sm leading-7 text-muted-foreground"
-                            : "mt-2 text-sm leading-7 text-muted-foreground"
-                        }
-                      >
+                      <p key={index} className={index === 0 ? "text-sm leading-7 text-muted-foreground" : "mt-2 text-sm leading-7 text-muted-foreground"}>
                         {line}
                       </p>
                     ))}
@@ -326,16 +284,14 @@ export default function SimpleJsPracticePage<TInput>({
               {showSolution ? (
                 <div className="terminal-frame mt-5 p-4">
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="text-[10px] font-bold tracking-[0.35em] text-muted-foreground">
-                      SOLUTION
-                    </span>
+                    <span className="text-[10px] font-bold tracking-[0.35em] text-muted-foreground">SOLUTION</span>
                     <span className="text-[10px] font-bold tracking-[0.35em] text-primary">
-                      {language.toUpperCase()}
+                      {language === "javascript" ? "JAVASCRIPT" : `${language.toUpperCase()} PREVIEW`}
                     </span>
                   </div>
 
                   <pre className="overflow-x-auto whitespace-pre-wrap text-xs leading-6 md:text-sm">
-                    {solutionMap[language]}
+                    {language === "javascript" ? solutionJavaScript : buildPreviewCode(title, language)}
                   </pre>
                 </div>
               ) : null}
@@ -364,9 +320,7 @@ export default function SimpleJsPracticePage<TInput>({
             <div className="grid min-h-0 flex-1 border-b border-border xl:grid-cols-[minmax(0,1fr)_360px]">
               <div className="flex min-h-0 flex-col border-r border-border px-4 py-4">
                 <div className="mb-3 flex items-center justify-between">
-                  <div className="text-[10px] font-bold tracking-[0.35em] text-muted-foreground">
-                    CODE EDITOR
-                  </div>
+                  <div className="text-[10px] font-bold tracking-[0.35em] text-muted-foreground">CODE EDITOR</div>
 
                   <button
                     onClick={loadSolution}
@@ -387,9 +341,7 @@ export default function SimpleJsPracticePage<TInput>({
               </div>
 
               <aside className="flex min-h-0 flex-col px-4 py-4">
-                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">
-                  TESTCASES
-                </div>
+                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">TESTCASES</div>
 
                 <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
                   {testCases.map((testCase) => (
@@ -435,28 +387,24 @@ export default function SimpleJsPracticePage<TInput>({
                 </div>
 
                 <div className="terminal-frame mt-3 p-3 text-xs leading-6 text-muted-foreground">
-                  JavaScript runs real local tests. Other languages are editable previews with full solution code.
+                  JavaScript runs real local tests. Other languages are editable previews.
                 </div>
               </aside>
             </div>
 
             <div className="grid h-[210px] flex-none xl:grid-cols-2">
               <div className="border-r border-border px-4 py-4">
-                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">
-                  CONSOLE
-                </div>
+                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">CONSOLE</div>
 
                 <div className="terminal-frame h-[150px] overflow-auto p-3">
-                  <pre className="whitespace-pre-wrap break-words font-mono text-[12px] leading-5 text-foreground">{consoleOutput}</pre>
+                  <pre className="whitespace-pre-wrap break-words text-xs leading-6">{consoleOutput}</pre>
                 </div>
               </div>
 
               <div className="px-4 py-4">
-                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">
-                  RESULT
-                </div>
+                <div className="mb-3 text-[10px] font-bold tracking-[0.35em] text-muted-foreground">RESULT</div>
 
-                <div className="terminal-frame h-[150px] overflow-auto p-3 text-[12px] leading-5 text-muted-foreground">
+                <div className="terminal-frame h-[150px] overflow-auto p-3 text-xs leading-6 text-muted-foreground">
                   <p>{resultText}</p>
                   {resultMetaLines.map((line, index) => (
                     <p key={index} className={index === 0 ? "mt-3" : ""}>

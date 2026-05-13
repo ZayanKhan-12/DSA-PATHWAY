@@ -72,25 +72,6 @@ function buildPreviewCode(title: string, language: LanguageKey) {
   ].join("\n");
 }
 
-
-function getLanguageLabel(language: LanguageKey) {
-  return LANGUAGES.find((item) => item.key === language)?.label ?? language.toUpperCase();
-}
-
-function buildPreviewConsole(command: "run.sample" | "submit", language: LanguageKey) {
-  const label = getLanguageLabel(language);
-
-  return [
-    `$ ${command}`,
-    `language: ${label}`,
-    "mode: editable preview",
-    "",
-    `${label} code is available to read, edit, and copy.`,
-    "Local browser tests run in JavaScript only.",
-    "Switch to JAVASCRIPT to run or submit test cases.",
-  ].join("\n");
-}
-
 function buildCodeMap(
   title: string,
   javascriptCode: string,
@@ -163,20 +144,8 @@ export default function SimpleJsPracticePage<TInput>({
       setConsoleOutput("$ loaded JAVASCRIPT solution");
       setResultText("Loaded runnable JavaScript solution.");
     } else {
-      const label = getLanguageLabel(language);
-
-      setConsoleOutput(
-        [
-          "$ load.solution",
-          `language: ${label}`,
-          "mode: editable preview",
-          "",
-          `${label} solution loaded into the editor.`,
-          "Switch to JAVASCRIPT to run local test cases.",
-        ].join("\n")
-      );
-
-      setResultText(`${label} solution loaded as an editable preview.`);
+      setConsoleOutput(`$ loaded ${language.toUpperCase()} solution preview`);
+      setResultText(`${language.toUpperCase()} solution loaded as editable preview. Switch to JavaScript to run tests.`);
     }
   }
 
@@ -184,10 +153,17 @@ export default function SimpleJsPracticePage<TInput>({
     if (!selectedCase) return;
 
     if (language !== "javascript") {
-      const label = getLanguageLabel(language);
-
-      setConsoleOutput(buildPreviewConsole("run.sample", language));
-      setResultText(`${label} is editable preview only. JavaScript runs the local tests.`);
+      setConsoleOutput(
+        [
+          "$ run.sample",
+          `language: ${language.toUpperCase()}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
+      setResultText(`${language.toUpperCase()} is editable preview only. JavaScript runs the local tests.`);
       return;
     }
 
@@ -212,10 +188,17 @@ export default function SimpleJsPracticePage<TInput>({
 
   function submitAllCases() {
     if (language !== "javascript") {
-      const label = getLanguageLabel(language);
-
-      setConsoleOutput(buildPreviewConsole("submit", language));
-      setResultText(`${label} is editable preview only. JavaScript runs the local tests.`);
+      setConsoleOutput(
+        [
+          "$ submit",
+          `language: ${language.toUpperCase()}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
+      setResultText(`${language.toUpperCase()} is editable preview only. JavaScript runs the local tests.`);
       return;
     }
 
@@ -447,7 +430,7 @@ export default function SimpleJsPracticePage<TInput>({
                 </div>
 
                 <div className="terminal-frame h-[150px] overflow-auto p-3">
-                  <pre className="whitespace-pre-wrap break-words font-mono text-[12px] leading-5 text-foreground">{consoleOutput}</pre>
+                  <pre className="whitespace-pre-wrap break-words text-xs leading-6">{consoleOutput}</pre>
                 </div>
               </div>
 
@@ -456,7 +439,7 @@ export default function SimpleJsPracticePage<TInput>({
                   RESULT
                 </div>
 
-                <div className="terminal-frame h-[150px] overflow-auto p-3 text-[12px] leading-5 text-muted-foreground">
+                <div className="terminal-frame h-[150px] overflow-auto p-3 text-xs leading-6 text-muted-foreground">
                   <p>{resultText}</p>
                   {resultMetaLines.map((line, index) => (
                     <p key={index} className={index === 0 ? "mt-3" : ""}>
