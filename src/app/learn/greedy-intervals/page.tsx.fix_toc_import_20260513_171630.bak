@@ -2,8 +2,11 @@
 import MaximumNonOverlappingIntervalsCardWiring from "./MaximumNonOverlappingIntervalsCardWiring";
 import MinimumArrowsToBurstBalloonsCardWiring from "./MinimumArrowsToBurstBalloonsCardWiring";
 import GreedyIntervalPracticeCardsWiring from "./GreedyIntervalPracticeCardsWiring";
+import LessonTocSectionRouter from "@/app/components/navigation/LessonTocSectionRouter";
+
 import Link from "next/link";
 import { useState } from "react";
+
 const languageTabs = [
   "TypeScript",
   "JavaScript",
@@ -456,7 +459,7 @@ export default function GreedyIntervalsPage() {
           <MaximumNonOverlappingIntervalsCardWiring />
           <MinimumArrowsToBurstBalloonsCardWiring />
           <GreedyIntervalPracticeCardsWiring />
-                
-      </main>
+          <LessonTocSectionRouter />
+    </main>
   );
 }

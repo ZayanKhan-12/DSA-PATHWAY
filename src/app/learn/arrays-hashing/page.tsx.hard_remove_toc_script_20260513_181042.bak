@@ -628,6 +628,248 @@ seen.set(nums[i], i)`}</pre>
         </div>
       </div>
                 
-      </main>
+      <Script
+        id="direct-toc-router"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+(function () {
+  var installKey = "__directTocRouterInstalled__" + window.location.pathname;
+
+  if (window[installKey]) {
+    return;
+  }
+
+  window[installKey] = true;
+
+  var items = [
+    { label: "01 Root Problem", title: "Root Problem", ids: ["root", "root-problem"] },
+    { label: "02 Core Idea", title: "Core Idea", ids: ["core", "core-idea"] },
+    { label: "03 Intuition", title: "Intuition", ids: ["intuition"] },
+    { label: "04 Step-by-Step Example", title: "Step-by-Step Example", ids: ["example", "step-by-step-example", "step-by-step"] },
+    { label: "05 Code Implementation", title: "Code Implementation", ids: ["code", "code-implementation", "implementation"] },
+    { label: "06 Time Complexity", title: "Time Complexity", ids: ["complexity", "time-complexity"] },
+    { label: "07 Real-World Uses", title: "Real-World Uses", ids: ["uses", "real-world-uses", "real-world"] },
+    { label: "08 Practice Problems", title: "Practice Problems", ids: ["practice", "practice-problems"] }
+  ];
+
+  function normalize(value) {
+    return String(value || "")
+      .replace(/\\$/g, "")
+      .replace(/_/g, " ")
+      .replace(/\\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+
+  function hasAllTocLabels(element) {
+    var text = normalize(element.textContent || "");
+
+    return (
+      text.includes("table of contents") &&
+      items.every(function (item) {
+        return text.includes(normalize(item.title));
+      })
+    );
+  }
+
+  function findTocContainer() {
+    var candidates = Array.from(
+      document.querySelectorAll("aside, nav, section, article, div")
+    )
+      .filter(hasAllTocLabels)
+      .sort(function (a, b) {
+        return String(a.textContent || "").length - String(b.textContent || "").length;
+      });
+
+    return candidates[0] || null;
+  }
+
+  function findTocTextNode(container, item) {
+    var wantedLabel = normalize(item.label);
+    var wantedTitle = normalize(item.title);
+
+    var nodes = Array.from(
+      container.querySelectorAll("a, button, li, p, span, div")
+    );
+
+    return nodes
+      .filter(function (node) {
+        var text = normalize(node.textContent || "");
+
+        if (!text) return false;
+        if (text.length > 100) return false;
+
+        return (
+          text === wantedLabel ||
+          text === wantedTitle ||
+          text.endsWith(wantedTitle)
+        );
+      })
+      .sort(function (a, b) {
+        return String(a.textContent || "").length - String(b.textContent || "").length;
+      })[0] || null;
+  }
+
+  function findTarget(item) {
+    for (var i = 0; i < item.ids.length; i++) {
+      var existing = document.getElementById(item.ids[i]);
+
+      if (existing) {
+        existing.style.scrollMarginTop = "96px";
+        return existing;
+      }
+    }
+
+    var tocContainer = findTocContainer();
+
+    var candidates = Array.from(
+      document.querySelectorAll("section, article, h1, h2, h3, h4, div")
+    )
+      .filter(function (node) {
+        if (tocContainer && tocContainer.contains(node)) return false;
+
+        var text = normalize(node.textContent || "");
+
+        if (!text.includes(normalize(item.title))) return false;
+        if (text.includes("table of contents")) return false;
+        if (text.length > 4500) return false;
+
+        return true;
+      })
+      .sort(function (a, b) {
+        return String(a.textContent || "").length - String(b.textContent || "").length;
+      });
+
+    var target = candidates[0];
+
+    if (!target) {
+      console.warn("[TOC] Could not find target:", item.title);
+      return null;
+    }
+
+    var current = target;
+
+    for (var depth = 0; depth < 8 && current; depth++) {
+      var tag = current.tagName.toLowerCase();
+
+      if (tag === "section" || tag === "article") {
+        current.id = item.ids[0];
+        current.style.scrollMarginTop = "96px";
+        return current;
+      }
+
+      current = current.parentElement;
+    }
+
+    target.id = item.ids[0];
+    target.style.scrollMarginTop = "96px";
+    return target;
+  }
+
+  function scrollToItem(item) {
+    var target = findTarget(item);
+
+    if (!target) return;
+
+    window.history.replaceState(null, "", "#" + target.id);
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  function clearOverlays() {
+    document.querySelectorAll("[data-direct-toc-overlay='true']").forEach(function (node) {
+      node.remove();
+    });
+  }
+
+  function wireToc() {
+    clearOverlays();
+
+    var container = findTocContainer();
+
+    if (!container) {
+      console.warn("[TOC] Table of contents container not found.");
+      return;
+    }
+
+    if (window.getComputedStyle(container).position === "static") {
+      container.style.position = "relative";
+    }
+
+    container.style.overflow = "visible";
+
+    var containerRect = container.getBoundingClientRect();
+
+    items.forEach(function (item) {
+      var sourceNode = findTocTextNode(container, item);
+
+      if (!sourceNode) {
+        console.warn("[TOC] Row not found:", item.label);
+        return;
+      }
+
+      var nodeRect = sourceNode.getBoundingClientRect();
+
+      if (nodeRect.width === 0 || nodeRect.height === 0) return;
+
+      sourceNode.style.cursor = "pointer";
+
+      var overlay = document.createElement("button");
+
+      overlay.type = "button";
+      overlay.setAttribute("aria-label", "Go to " + item.title);
+      overlay.setAttribute("data-direct-toc-overlay", "true");
+
+      overlay.style.position = "absolute";
+      overlay.style.left = "0px";
+      overlay.style.right = "0px";
+      overlay.style.top = String(nodeRect.top - containerRect.top - 12) + "px";
+      overlay.style.height = String(Math.max(nodeRect.height + 24, 48)) + "px";
+      overlay.style.zIndex = "50";
+      overlay.style.cursor = "pointer";
+      overlay.style.background = "transparent";
+      overlay.style.border = "0";
+      overlay.style.padding = "0";
+      overlay.style.margin = "0";
+      overlay.style.display = "block";
+
+      overlay.onmouseenter = function () {
+        sourceNode.style.color = "var(--primary)";
+      };
+
+      overlay.onmouseleave = function () {
+        sourceNode.style.color = "";
+      };
+
+      overlay.onclick = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        scrollToItem(item);
+      };
+
+      container.appendChild(overlay);
+    });
+  }
+
+  function scheduleWire() {
+    window.requestAnimationFrame(wireToc);
+  }
+
+  scheduleWire();
+  window.setTimeout(scheduleWire, 200);
+  window.setTimeout(scheduleWire, 700);
+  window.setTimeout(scheduleWire, 1400);
+
+  window.addEventListener("resize", scheduleWire);
+})();
+          `,
+        }}
+      />
+
+    </main>
   );
 }

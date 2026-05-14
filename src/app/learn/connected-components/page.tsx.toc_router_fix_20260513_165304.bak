@@ -1,6 +1,8 @@
 "use client";
+
 import Link from "next/link";
 import { useState } from "react";
+
 type TocItem = {
   id: string;
   num: string;
@@ -699,7 +701,6 @@ Undirected graph: O(2E) = O(E)`}</pre>
           </div>
         </div>
       </div>
-                
-      </main>
+    </main>
   );
 }

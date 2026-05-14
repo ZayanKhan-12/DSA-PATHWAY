@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
+import StableLessonTocRouter from "../../components/navigation/StableLessonTocRouter";
 type TocItem = {
   id: string;
   num: string;
@@ -659,7 +660,7 @@ Space = O(n)`}</pre>
           </div>
         </div>
       </div>
-                
-      </main>
+              <StableLessonTocRouter />
+    </main>
   );
 }

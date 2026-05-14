@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
+import LessonTocSectionRouter from "../../components/navigation/LessonTocSectionRouter";
+
 type TocItem = {
   id: string;
   num: string;
@@ -910,7 +912,7 @@ E = number of edges`}</pre>
           </div>
         </div>
       </div>
-                
-      </main>
+          <LessonTocSectionRouter />
+    </main>
   );
 }

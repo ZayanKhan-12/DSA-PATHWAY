@@ -1,6 +1,9 @@
  "use client";
+import LessonTocSectionRouter from "@/app/components/navigation/LessonTocSectionRouter";
+
 import Link from "next/link";
 import { useState } from "react";
+
 const languageTabs = [
   "TypeScript",
   "JavaScript",
@@ -448,7 +451,7 @@ export default function BitManipulationPage() {
           </section>
         </div>
       </div>
-                
-      </main>
+          <LessonTocSectionRouter />
+    </main>
   );
 }

@@ -2,6 +2,7 @@
 import ClickablePracticeCardWiring from "./ClickablePracticeCardWiring";
 import Link from "next/link";
 import { useState } from "react";
+import LessonTocSectionRouter from "../../components/navigation/LessonTocSectionRouter";
 const codeByLanguage = {
   TypeScript: `class ListNode {
   val: number;
@@ -547,7 +548,7 @@ next`}
         </div>
       </div>
           <ClickablePracticeCardWiring />
-                
-      </main>
+          <LessonTocSectionRouter />
+    </main>
   );
 }
