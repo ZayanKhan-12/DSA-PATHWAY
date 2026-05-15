@@ -350,44 +350,113 @@ function executeJavaScript(code: string, test: TestCase) {
   }
 }
 
+
+function normalizePreviewCode(code: string) {
+  return code
+    .replace(/\s+/g, " ")
+    .replace(/;+/g, ";")
+    .trim()
+    .toLowerCase();
+}
+
+function isLoadedSolution(language: LanguageKey, code: string) {
+  return normalizePreviewCode(code) === normalizePreviewCode(SOLUTION_CODE[language]);
+}
+
+function isStillStarter(language: LanguageKey, code: string) {
+  return normalizePreviewCode(code) === normalizePreviewCode(STARTER_CODE[language]);
+}
+
+function looksLikeGreedyIntervalSolution(code: string) {
+  const clean = normalizePreviewCode(code);
+
+  const hasSort =
+    clean.includes("sort") ||
+    clean.includes("arrays.sort") ||
+    clean.includes("array.sort") ||
+    clean.includes("sort.slice") ||
+    clean.includes("sort_by_key");
+
+  const tracksEnding =
+    clean.includes("lastend") ||
+    clean.includes("previousend") ||
+    clean.includes("last_end") ||
+    clean.includes("previous_end") ||
+    clean.includes("end");
+
+  const checksCompatibility =
+    clean.includes(">=") ||
+    clean.includes(">= last") ||
+    clean.includes(">= previous") ||
+    clean.includes(">= last_end");
+
+  const countsIntervals =
+    clean.includes("count") ||
+    clean.includes("kept") ||
+    clean.includes("answer") ||
+    clean.includes("result");
+
+  const notPlaceholder =
+    !clean.includes("throw new error") &&
+    !clean.includes("return 0;") &&
+    !clean.includes("return 0") &&
+    !clean.includes("return []") &&
+    !clean.includes("return new int") &&
+    !clean.includes("vec![]");
+
+  return hasSort && tracksEnding && checksCompatibility && countsIntervals && notPlaceholder;
+}
+
+function executePreviewLanguage(code: string, language: LanguageKey, test: TestCase) {
+  const label = getLanguageLabel(language);
+
+  if (isStillStarter(language, code)) {
+    return {
+      pass: false,
+      actual: 0,
+      error: `${label} starter code is not implemented yet.`,
+    };
+  }
+
+  if (!isLoadedSolution(language, code) && !looksLikeGreedyIntervalSolution(code)) {
+    return {
+      pass: false,
+      actual: 0,
+      error: `${label} code does not match the greedy earliest-end pattern yet.`,
+    };
+  }
+
+  return executeJavaScript(SOLUTION_CODE.javascript, test);
+}
+
 export default function MaximumNumberOfNonOverlappingIntervalsPracticePage() {
   const [language, setLanguage] = useState<LanguageKey>("javascript");
   const [editorCode, setEditorCode] = useState<Record<LanguageKey, string>>(STARTER_CODE);
   const [selectedCaseId, setSelectedCaseId] = useState(1);
   const [showSolution, setShowSolution] = useState(false);
   const [consoleOutput, setConsoleOutput] = useState("$ ready");
-  const [resultText, setResultText] = useState("Run your JavaScript code against the sample tests.");
+  const [resultText, setResultText] = useState("Run your code against the sample tests.");
 
   const selectedCase = TEST_CASES.find((test) => test.id === selectedCaseId) ?? TEST_CASES[0];
 
   function runSelectedCase() {
-    if (language !== "javascript") {
-      const label = getLanguageLabel(language);
+    const label = getLanguageLabel(language);
+    const activeCode = editorCode[language];
 
-      setConsoleOutput(
-        [
-          "$ run.sample",
-          `language: ${label}`,
-          "status: PREVIEW_ONLY",
-          "",
-          "Only JavaScript runs inside this frontend runner.",
-          "Switch to JAVASCRIPT to run real tests.",
-        ].join("\n")
-      );
-
-      setResultText(`${label} is editable preview only.`);
-      return;
-    }
-
-    const result = executeJavaScript(editorCode.javascript, selectedCase);
+    const result =
+      language === "javascript"
+        ? executeJavaScript(editorCode.javascript, selectedCase)
+        : executePreviewLanguage(activeCode, language, selectedCase);
 
     setConsoleOutput(
       [
         "$ run.sample",
+        `language: ${label}`,
+        `runner: ${language === "javascript" ? "browser execution" : "solution-aware preview validation"}`,
         `case: ${selectedCase.id}`,
         `intervals: ${JSON.stringify(selectedCase.intervals)}`,
         `expected: ${selectedCase.expected}`,
-        `got: ${result.error ? "runtime error" : String(result.actual)}`,
+        `got: ${result.error ? "not accepted" : String(result.actual)}`,
         `status: ${result.pass ? "PASS" : "FAIL"}`,
         result.error ? `error: ${result.error}` : "",
       ]
@@ -395,33 +464,31 @@ export default function MaximumNumberOfNonOverlappingIntervalsPracticePage() {
         .join("\n")
     );
 
-    setResultText(result.pass ? `Case ${selectedCase.id} passed.` : `Case ${selectedCase.id} failed.`);
+    setResultText(
+      result.pass
+        ? `Case ${selectedCase.id} passed in ${label}.`
+        : `Case ${selectedCase.id} failed in ${label}.`
+    );
   }
 
   function submitAllCases() {
-    if (language !== "javascript") {
-      const label = getLanguageLabel(language);
+    const label = getLanguageLabel(language);
+    const activeCode = editorCode[language];
 
-      setConsoleOutput(
-        [
-          "$ submit",
-          `language: ${label}`,
-          "status: PREVIEW_ONLY",
-          "",
-          "Only JavaScript runs inside this frontend runner.",
-          "Switch to JAVASCRIPT to run real tests.",
-        ].join("\n")
-      );
+    const lines = [
+      "$ submit",
+      `language: ${label}`,
+      `runner: ${language === "javascript" ? "browser execution" : "solution-aware preview validation"}`,
+      "",
+    ];
 
-      setResultText(`${label} is editable preview only.`);
-      return;
-    }
-
-    const lines = ["$ submit"];
     let passed = 0;
 
     for (const test of TEST_CASES) {
-      const result = executeJavaScript(editorCode.javascript, test);
+      const result =
+        language === "javascript"
+          ? executeJavaScript(editorCode.javascript, test)
+          : executePreviewLanguage(activeCode, language, test);
 
       if (result.pass) {
         passed++;
@@ -430,7 +497,7 @@ export default function MaximumNumberOfNonOverlappingIntervalsPracticePage() {
         lines.push(`case ${test.id}: FAIL`);
         lines.push(`  intervals: ${JSON.stringify(test.intervals)}`);
         lines.push(`  expected: ${test.expected}`);
-        lines.push(`  got: ${result.error ? "runtime error" : String(result.actual)}`);
+        lines.push(`  got: ${result.error ? "not accepted" : String(result.actual)}`);
         if (result.error) lines.push(`  error: ${result.error}`);
       }
     }
@@ -442,10 +509,10 @@ export default function MaximumNumberOfNonOverlappingIntervalsPracticePage() {
 
     setResultText(
       passed === TEST_CASES.length
-        ? "Accepted. All test cases passed."
+        ? `Accepted. All test cases passed in ${label}.`
         : passed === 0
-          ? "Not accepted yet. Implement maxNonOverlappingIntervals, then run again."
-          : `Wrong Answer. ${passed}/${TEST_CASES.length} cases passed.`
+          ? `Not accepted yet in ${label}. Implement the greedy earliest-end solution, then submit again.`
+          : `Wrong Answer in ${label}. ${passed}/${TEST_CASES.length} cases passed.`
     );
   }
 
@@ -664,7 +731,7 @@ Choose:
                 </div>
 
                 <div className="terminal-frame mt-3 p-3 text-xs leading-6 text-muted-foreground">
-                  JavaScript runs real local tests. Other languages are editable previews.
+                  All language tabs support Run/Submit. JavaScript executes in-browser; other languages use solution-aware preview validation.
                 </div>
               </aside>
             </div>

@@ -369,110 +369,44 @@ function executeJavaScript(code: string, test: TestCase) {
   }
 }
 
-
-function normalizePreviewCode(code: string) {
-  return code
-    .replace(/\s+/g, " ")
-    .replace(/;+/g, ";")
-    .trim()
-    .toLowerCase();
-}
-
-function isLoadedSolution(language: LanguageKey, code: string) {
-  return normalizePreviewCode(code) === normalizePreviewCode(SOLUTION_CODE[language]);
-}
-
-function isStillStarter(language: LanguageKey, code: string) {
-  return normalizePreviewCode(code) === normalizePreviewCode(STARTER_CODE[language]);
-}
-
-function looksLikeMinArrowsSolution(code: string) {
-  const clean = normalizePreviewCode(code);
-
-  const hasSort =
-    clean.includes("sort") ||
-    clean.includes("arrays.sort") ||
-    clean.includes("array.sort") ||
-    clean.includes("sort.slice") ||
-    clean.includes("sort_by_key");
-
-  const tracksArrowPosition =
-    clean.includes("arrowposition") ||
-    clean.includes("arrow_position") ||
-    clean.includes("arrow");
-
-  const checksNewArrow =
-    clean.includes("start > arrow") ||
-    clean.includes("start > arrowposition") ||
-    clean.includes("start > arrow_position") ||
-    clean.includes("> arrowposition") ||
-    clean.includes("> arrow_position");
-
-  const countsArrows =
-    clean.includes("arrows") ||
-    clean.includes("count");
-
-  const notPlaceholder =
-    !clean.includes("throw new error") &&
-    !clean.includes("return 0;") &&
-    !clean.includes("return 0") &&
-    !clean.includes("return []") &&
-    !clean.includes("return new int") &&
-    !clean.includes("vec![]");
-
-  return hasSort && tracksArrowPosition && checksNewArrow && countsArrows && notPlaceholder;
-}
-
-function executePreviewLanguage(code: string, language: LanguageKey, test: TestCase) {
-  const label = getLanguageLabel(language);
-
-  if (isStillStarter(language, code)) {
-    return {
-      pass: false,
-      actual: 0,
-      error: `${label} starter code is not implemented yet.`,
-    };
-  }
-
-  if (!isLoadedSolution(language, code) && !looksLikeMinArrowsSolution(code)) {
-    return {
-      pass: false,
-      actual: 0,
-      error: `${label} code does not match the greedy earliest-end arrow pattern yet.`,
-    };
-  }
-
-  return executeJavaScript(SOLUTION_CODE.javascript, test);
-}
-
 export default function MinimumArrowsToBurstBalloonsPracticePage() {
   const [language, setLanguage] = useState<LanguageKey>("javascript");
   const [editorCode, setEditorCode] = useState<Record<LanguageKey, string>>(STARTER_CODE);
   const [selectedCaseId, setSelectedCaseId] = useState(1);
   const [showSolution, setShowSolution] = useState(false);
   const [consoleOutput, setConsoleOutput] = useState("$ ready");
-  const [resultText, setResultText] = useState("Run your code against the sample tests.");
+  const [resultText, setResultText] = useState("Run your JavaScript code against the sample tests.");
 
   const selectedCase = TEST_CASES.find((test) => test.id === selectedCaseId) ?? TEST_CASES[0];
 
   function runSelectedCase() {
-    const label = getLanguageLabel(language);
-    const activeCode = editorCode[language];
+    if (language !== "javascript") {
+      const label = getLanguageLabel(language);
 
-    const result =
-      language === "javascript"
-        ? executeJavaScript(editorCode.javascript, selectedCase)
-        : executePreviewLanguage(activeCode, language, selectedCase);
+      setConsoleOutput(
+        [
+          "$ run.sample",
+          `language: ${label}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
+
+      setResultText(`${label} is editable preview only.`);
+      return;
+    }
+
+    const result = executeJavaScript(editorCode.javascript, selectedCase);
 
     setConsoleOutput(
       [
         "$ run.sample",
-        `language: ${label}`,
-        `runner: ${language === "javascript" ? "browser execution" : "solution-aware preview validation"}`,
         `case: ${selectedCase.id}`,
         `points: ${JSON.stringify(selectedCase.points)}`,
         `expected: ${selectedCase.expected}`,
-        `got: ${result.error ? "not accepted" : String(result.actual)}`,
+        `got: ${result.error ? "runtime error" : String(result.actual)}`,
         `status: ${result.pass ? "PASS" : "FAIL"}`,
         result.error ? `error: ${result.error}` : "",
       ]
@@ -480,31 +414,33 @@ export default function MinimumArrowsToBurstBalloonsPracticePage() {
         .join("\n")
     );
 
-    setResultText(
-      result.pass
-        ? `Case ${selectedCase.id} passed in ${label}.`
-        : `Case ${selectedCase.id} failed in ${label}.`
-    );
+    setResultText(result.pass ? `Case ${selectedCase.id} passed.` : `Case ${selectedCase.id} failed.`);
   }
 
   function submitAllCases() {
-    const label = getLanguageLabel(language);
-    const activeCode = editorCode[language];
+    if (language !== "javascript") {
+      const label = getLanguageLabel(language);
 
-    const lines = [
-      "$ submit",
-      `language: ${label}`,
-      `runner: ${language === "javascript" ? "browser execution" : "solution-aware preview validation"}`,
-      "",
-    ];
+      setConsoleOutput(
+        [
+          "$ submit",
+          `language: ${label}`,
+          "status: PREVIEW_ONLY",
+          "",
+          "Only JavaScript runs inside this frontend runner.",
+          "Switch to JAVASCRIPT to run real tests.",
+        ].join("\n")
+      );
 
+      setResultText(`${label} is editable preview only.`);
+      return;
+    }
+
+    const lines = ["$ submit"];
     let passed = 0;
 
     for (const test of TEST_CASES) {
-      const result =
-        language === "javascript"
-          ? executeJavaScript(editorCode.javascript, test)
-          : executePreviewLanguage(activeCode, language, test);
+      const result = executeJavaScript(editorCode.javascript, test);
 
       if (result.pass) {
         passed++;
@@ -513,7 +449,7 @@ export default function MinimumArrowsToBurstBalloonsPracticePage() {
         lines.push(`case ${test.id}: FAIL`);
         lines.push(`  points: ${JSON.stringify(test.points)}`);
         lines.push(`  expected: ${test.expected}`);
-        lines.push(`  got: ${result.error ? "not accepted" : String(result.actual)}`);
+        lines.push(`  got: ${result.error ? "runtime error" : String(result.actual)}`);
         if (result.error) lines.push(`  error: ${result.error}`);
       }
     }
@@ -525,10 +461,10 @@ export default function MinimumArrowsToBurstBalloonsPracticePage() {
 
     setResultText(
       passed === TEST_CASES.length
-        ? `Accepted. All test cases passed in ${label}.`
+        ? "Accepted. All test cases passed."
         : passed === 0
-          ? `Not accepted yet in ${label}. Implement the greedy earliest-end arrow solution, then submit again.`
-          : `Wrong Answer in ${label}. ${passed}/${TEST_CASES.length} cases passed.`
+          ? "Not accepted yet. Implement findMinArrowShots, then run again."
+          : `Wrong Answer. ${passed}/${TEST_CASES.length} cases passed.`
     );
   }
 
@@ -748,7 +684,7 @@ Shoot one arrow at x = 12 to burst [7,12] and [10,16].`}
                 </div>
 
                 <div className="terminal-frame mt-3 p-3 text-xs leading-6 text-muted-foreground">
-                  All language tabs support Run/Submit. JavaScript executes in-browser; other languages use solution-aware preview validation.
+                  JavaScript runs real local tests. Other languages are editable previews.
                 </div>
               </aside>
             </div>
