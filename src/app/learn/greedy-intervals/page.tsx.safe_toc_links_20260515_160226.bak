@@ -4,7 +4,6 @@ import MinimumArrowsToBurstBalloonsCardWiring from "./MinimumArrowsToBurstBalloo
 import GreedyIntervalPracticeCardsWiring from "./GreedyIntervalPracticeCardsWiring";
 import Link from "next/link";
 import { useState } from "react";
-import SafeLessonTocLinks from "../../components/navigation/SafeLessonTocLinks";
 const languageTabs = [
   "TypeScript",
   "JavaScript",
@@ -458,8 +457,6 @@ export default function GreedyIntervalsPage() {
           <MinimumArrowsToBurstBalloonsCardWiring />
           <GreedyIntervalPracticeCardsWiring />
                 
-            
-          <SafeLessonTocLinks />
-    </main>
+      </main>
   );
 }

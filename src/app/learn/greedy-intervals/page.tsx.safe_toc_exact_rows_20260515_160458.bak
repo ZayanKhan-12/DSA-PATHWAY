@@ -458,8 +458,7 @@ export default function GreedyIntervalsPage() {
           <MinimumArrowsToBurstBalloonsCardWiring />
           <GreedyIntervalPracticeCardsWiring />
                 
-            
-          <SafeLessonTocLinks />
+            <SafeLessonTocLinks />
     </main>
   );
 }
