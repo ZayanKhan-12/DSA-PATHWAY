@@ -53,3 +53,4 @@ export const HeroTerminal = () => {
     </div>
   );
 };
+///ADD COMMENTS TO THE PAGE
