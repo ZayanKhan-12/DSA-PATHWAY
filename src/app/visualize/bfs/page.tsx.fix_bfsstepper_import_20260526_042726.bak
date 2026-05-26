@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BFSStepper } from "../../../src/components/BFSStepper";
+import { BFSStepper } from "@/components/BFSStepper";
+
 export default function VisualizeBFS() {
   return (
     <main className="relative min-h-screen">
